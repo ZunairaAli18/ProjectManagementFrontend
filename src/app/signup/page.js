@@ -1,7 +1,132 @@
-export default function SignupPage() {
-  return (
-    <div className="flex items-center justify-center h-screen">
-      <h1 className="text-3xl font-semibold">Signup Page</h1>
-    </div>
-  );
+'use client';
+import { useState } from "react";
+import Navbar from "../components/NavBar";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+
+export default function SignUpPage(){
+    const router=useRouter();
+    const [form, setForm]=useState({
+        name: '',
+        email: '',
+        role: '',
+        password:'',
+        confirmPassword:'',
+    });
+    const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm(prev => ({ ...prev, [name]: value }));
+  };
+    const handleSubmit=async(e)=>{
+        e.preventDefault();
+        
+        if(form.password!==form.confirmPassword){
+            alert("Passwords donot match!");
+            setForm((prev) => ({
+      ...prev,
+      password: '',
+      confirmPassword: '',
+    }));
+    return;
+        }
+        console.log("Form Submitted", form);
+
+        try {
+    
+    const response = await fetch('http://localhost:5000/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name: form.name,
+        email: form.email,
+        password: form.password,
+      }),
+    });
+
+    const result = await response.json();
+
+    if (response.ok) {
+      alert(result.message); // Or toast
+      router.push('/dashboard'); 
+    } else {
+      alert(result.error || 'Something went wrong');
+    }
+
+  } catch (error) {
+    console.error('Error submitting form:', error);
+    alert('Server error. Please try again later.');
+  }
+    }
+
+    return(
+        
+        <div className="min-h-screen bg-[#E0D4CC]">
+            <Navbar/>
+            <div className="flex items-center justify-center">
+                <form className="mt-25 bg-[#F6F6F6] p-8 rounded-xl shadow-xl w-[600px] h-[650px]" onSubmit={handleSubmit}>
+                    <h2 className="text-7xl text-center font-extrabold mb-6  text-blue-800">Sign Up</h2>
+                    <div className="mb-6"> 
+                        <label className="block mb-2 font-bold text-2xl">Name</label>
+                        <input type="text"
+            name="name"
+            value={form.name}
+            onChange={handleChange}
+            placeholder="Enter name"
+            className="w-full bg-blue-100 border border-gray-400 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required/>
+                    </div>
+
+                    <div className="mb-6">
+                        <label className="block mb-2 font-bold text-2xl">Email</label>
+                        <input  type="email"
+            name="email"
+            value={form.email}
+            onChange={handleChange}
+            placeholder="Enter email"
+            className="w-full bg-blue-100 border border-gray-400 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+                        />
+                    </div>
+
+                    
+
+                    <div className="mb-6">
+                        <label className="block mb-2 font-bold text-2xl">Password</label>
+                        <input
+                        type="password"
+                        name="password"
+                        value={form.password}
+                        onChange={handleChange}
+                        placeholder="Create new Password"
+                        className="w-full bg-blue-100 border border-gray-400 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        required/>
+                        <input
+  type="password"
+  name="confirmPassword"
+  value={form.confirmPassword}
+  onChange={handleChange}
+  placeholder="Retype new Password"
+  className="w-full bg-blue-100 border border-gray-400 px-4 py-2 rounded-lg mt-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+  required
+/>
+                    </div >
+<button
+          type="submit"
+          className="mt-3 h-[60px] w-full bg-blue-600 text-white font-bold py-2 px-4 rounded-xl hover:bg-blue-700 transition text-2xl"
+        >
+          Sign Up
+        </button>
+        <p className="mt-6 text-center text-lg font-medium text-gray-700">
+  Already have an account?{" "}
+  <Link href="/login" className="text-blue-600 hover:underline font-semibold">
+    Log in
+  </Link>
+</p>
+
+                </form>
+            </div>
+        </div>
+    );
 }
