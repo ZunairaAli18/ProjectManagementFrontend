@@ -12,7 +12,7 @@ export default function Navbar(){
             <div className="ml-1 flex items-center space-x-6">
             <Link href="/" className="flex items-center space-x-6">
             <Image src='/logo.png' width={52} height={52}/>
-            <span className="text-[40px] font-bold text-white">bahl</span>
+            <span className="text-[40px] font-bold text-white">Projectify</span>
             </Link>
             </div>
 
