@@ -1,6 +1,7 @@
 'use client';
 import Link from "next/link";
 import NavBar from "./components/NavBar";
+import './globals.css';
 
 export default function HomePage() {
   return (

@@ -3,6 +3,7 @@ import { useState } from "react";
 import Navbar from "../components/NavBar";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { createUser } from "@/lib/api/api";
 
 export default function SignUpPage(){
     const router=useRouter();
@@ -29,40 +30,32 @@ export default function SignUpPage(){
     }));
     return;
         }
-        console.log("Form Submitted", form);
-
-        try {
-    
-    const response = await fetch('http://localhost:5000/register', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        name: form.name,
-        email: form.email,
-        password: form.password,
-      }),
-    });
-
-    const result = await response.json();
-
-    if (response.ok) {
-      alert(result.message); // Or toast
-      router.push('/dashboard'); 
-    } else {
-      alert(result.error || 'Something went wrong');
-    }
-
-  } catch (error) {
-    console.error('Error submitting form:', error);
-    alert('Server error. Please try again later.');
+        if (form.password.length < 8) {
+    alert("Password must be at least 8 characters long.");
+    setForm((prev) => ({
+      ...prev,
+      password: '',
+      confirmPassword: '',
+    }));
+    return;
   }
+        console.log("Form Submitted", form);
+        try{
+          const result=await createUser(form);
+          alert(result.message);
+          router.push('/dashboard');
+        }catch(error){
+          console.error('Error:', error.message);
+          alert(error.message);
+
+        }
+        
+     
     }
 
     return(
         
-        <div className="min-h-screen bg-[#E0D4CC]">
+        <div className="bg-[#F9F3EF] min-h-screen">
             <Navbar/>
             <div className="flex items-center justify-center">
                 <form className="mt-25 bg-[#F6F6F6] p-8 rounded-xl shadow-xl w-[600px] h-[650px]" onSubmit={handleSubmit}>
