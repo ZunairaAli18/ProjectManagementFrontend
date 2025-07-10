@@ -1,5 +1,12 @@
+import MembersPanel from "../components/MembersPanel";
+
 export default function DashBoard(){
     return(
-        <div>Dashboard</div>
+        <div className="min-h-screen bg-black">
+        
+            
+            
+        </div>
+        
     );
 }
