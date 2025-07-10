@@ -1,27 +1,25 @@
-
-
 'use client';
+import { useEffect, useState } from 'react';
 import SideBar from '../components/SideBar';
-import ProjectCard from '../components/ProjectCard'; 
+import ProjectCard from '../components/ProjectCard';
+import { getAllProjects } from '../lib/api/projects'; 
 
 export default function DashBoard() {
+  const [projects, setProjects] = useState([]);
 
-  const projects = [
-    {
-      title: "Project Management System",
-      created_by: "Ali Raza",
-      created_at: "2025-07-10T10:30:00Z",
-      status: "In Progress",
-      deadline: "2025-08-15",
-    },
-    {
-      title: "Website Redesign",
-      created_by: "Sarah Khan",
-      created_at: "2025-06-22T14:00:00Z",
-      status: "Completed",
-      deadline: "2025-07-05",
-    },
-  ];
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const data = await getAllProjects();
+        setProjects(data);
+      } catch (err) {
+        console.error('Error fetching projects:', err.message);
+        alert('Could not load projects. Please try again.');
+      }
+    };
+
+    fetchProjects();
+  }, []);
 
   return (
     <div className="flex">
@@ -29,7 +27,6 @@ export default function DashBoard() {
       <div className="flex-1 p-8 bg-gray-100 min-h-screen">
         <h1 className="text-3xl font-bold text-black mb-6">All Projects</h1>
         
-        {/* Loop through projects and render ProjectCard */}
         {projects.map((project, index) => (
           <ProjectCard key={index} project={project} />
         ))}
@@ -37,4 +34,3 @@ export default function DashBoard() {
     </div>
   );
 }
-
