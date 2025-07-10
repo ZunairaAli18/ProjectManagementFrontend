@@ -13,6 +13,9 @@ export default function SignUpPage(){
         role: '',
         password:'',
         confirmPassword:'',
+        age: '',
+    gender: '',
+    bloodGroup: '',
     });
     const handleChange = (e) => {
     const { name, value } = e.target;
@@ -58,7 +61,7 @@ export default function SignUpPage(){
         <div className="bg-[#F9F3EF] min-h-screen">
             <Navbar/>
             <div className="flex items-center justify-center">
-                <form className="mt-25 bg-[#F6F6F6] p-8 rounded-xl shadow-xl w-[600px] h-[650px]" onSubmit={handleSubmit}>
+                <form className="mt-15 bg-[#F6F6F6] p-8 rounded-xl shadow-xl w-[600px] h-[950px]" onSubmit={handleSubmit}>
                     <h2 className="text-7xl text-center font-extrabold mb-6  text-blue-800">Sign Up</h2>
                     <div className="mb-6"> 
                         <label className="block mb-2 font-bold text-2xl">Name</label>
@@ -82,6 +85,54 @@ export default function SignUpPage(){
             required
                         />
                     </div>
+                  <div className="mb-6">
+  <label className="block mb-2 font-bold text-2xl">Age</label>
+  <input
+    type="number"
+    name="age"
+    value={form.age}
+    onChange={handleChange}
+    placeholder="Enter age"
+    className="w-full bg-blue-100 border border-gray-400 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+    required
+  />
+</div>
+<div className="mb-6">
+  <label className="block mb-2 font-bold text-2xl">Gender</label>
+  <select
+    name="gender"
+    value={form.gender}
+    onChange={handleChange}
+    className="w-full bg-blue-100 border border-gray-400 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+    required
+  >
+    <option value="">Select gender</option>
+    <option value="Male">Male</option>
+    <option value="Female">Female</option>
+    <option value="Other">Other</option>
+  </select>
+</div>
+
+<div className="mb-6">
+  <label className="block mb-2 font-bold text-2xl">Blood Group</label>
+  <select
+    name="bloodGroup"
+    value={form.bloodGroup}
+    onChange={handleChange}
+    className="w-full bg-blue-100 border border-gray-400 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+    required
+  >
+    <option value="">Select blood group</option>
+    <option value="A+">A+</option>
+    <option value="A-">A-</option>
+    <option value="B+">B+</option>
+    <option value="B-">B-</option>
+    <option value="O+">O+</option>
+    <option value="O-">O-</option>
+    <option value="AB+">AB+</option>
+    <option value="AB-">AB-</option>
+  </select>
+</div>
 
                     
 

@@ -7,7 +7,7 @@ export default function Navbar(){
     const pathname=usePathname();
 
     return(
-        <nav className="bg-[#9929EA] shadow-md px-6 py-4 flex justify-between items-center">
+        <nav className="bg-[#9929EA] shadow-md px-6 py-4 flex justify-between items-center ">
             {/*Left logo+Appname*/}
             <div className="ml-1 flex items-center space-x-6">
             <Link href="/" className="flex items-center space-x-6">

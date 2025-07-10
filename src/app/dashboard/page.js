@@ -1,8 +1,3 @@
-// export default function DashBoard(){
-//     return(
-//         <div>Dashboard</div>
-//     );
-// }
 
 'use client';
 import SideBar from '../components/SideBar';
@@ -18,3 +13,4 @@ export default function DashBoard() {
     </div>
   );
 }
+
