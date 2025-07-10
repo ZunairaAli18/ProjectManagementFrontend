@@ -1,8 +1,8 @@
-
 'use client';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import NavBar from '../components/NavBar';
+import { loginUser } from '@/lib/api/api';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -19,28 +19,17 @@ export default function LoginPage() {
     }
 
     try {
-      const response = await fetch('http://localhost:5000/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        alert('Login successful!');
-        router.push('/dashboard');
-      } else {
-        alert(data.error || 'Invalid credentials');
-      }
+      const result = await loginUser({ email, password });
+      alert(result.message);
+      router.push('/dashboard');
     } catch (error) {
-      console.error('Login error:', error);
-      alert('Server error. Please try again later.');
+      console.error('Login error:', error.message);
+      alert(error.message || 'Server error. Please try again later.');
     }
   };
 
   return (
-      <div className="min-h-screen bg-gradient-to-r from-orange-100 to-pink-200 font-sans">
+    <div className="min-h-screen bg-gradient-to-r from-orange-100 to-pink-200 font-sans">
       <NavBar />
 
       {/* Center the card */}
@@ -49,7 +38,7 @@ export default function LoginPage() {
           <h2 className="text-7xl font-bold text-blue-800 mb-6 text-center">Login</h2>
 
           <form onSubmit={handleLogin} className="space-y-5">
-            <div className='mb-6'> 
+            <div className='mb-6'>
               <label className="block mb-2 font-bold text-2xl">Email</label>
               <input
                 type="email"
