@@ -1,24 +1,24 @@
 'use client';
 import MemberProfile from "./MemberProfile";
-import { useState } from "react";
+import { useState,useEffect } from "react";
 
+import { fetchMembers } from "../../lib/api/Members";
 export default function MembersPanel() {
-  const members = [
-    {
-      id: 1,
-      name: "Zunaira Ali",
-      email: "zunaira@example.com",
-      joined: "2024-08-01",
-      age: "20",
-      gender:"female",
-      bloodGroup: "A+"
-
+  
+    const [members, setMembers] = useState([]);
+    const [selectedMember, setSelectedMember] = useState(null);
+  useEffect(() => {
+    async function loadMembers() {
+      const data = await fetchMembers();
+      setMembers(data);
     }
+    loadMembers();
+  }, []);
     
-  ];
-  const[selectedMember, setSElectedMember]=useState(null);
+  
+
   return (
-    <div className="fixed top-20 bottom-10 left-10 bg-white rounded-lg border shadow-lg z-50 overflow-hidden" style={{ width: '1000px', height: '80vh' }}>
+    <div className="fixed top-25 bottom-10 left-110 bg-white rounded-lg border shadow-lg z-50 overflow-hidden" style={{ width: '1200px', height: '80vh' }}>
       <div className="flex h-full">
         
         {/* Left 40% */}

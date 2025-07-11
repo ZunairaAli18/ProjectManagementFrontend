@@ -1,8 +1,8 @@
 'use client';
 import { useEffect, useState } from 'react';
 import SideBar from '../components/SideBar';
-import ProjectCard from '../components/ProjectCard';
-import { getAllProjects } from '../lib/api/projects'; 
+import ProjectCard from '../components/ProjectCard'
+import { getAllProjects } from '../../lib/api/projects';
 
 export default function DashBoard() {
   const [projects, setProjects] = useState([]);
