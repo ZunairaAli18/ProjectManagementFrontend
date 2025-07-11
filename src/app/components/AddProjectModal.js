@@ -1,6 +1,6 @@
 import { useState,useEffect } from "react";
 
-export default function AddProjectModal({ onClose }) {
+export default function AddProjectModal({ onClose, onSave }) {
     const [form, setForm] = useState({
     name: '',
     description: '',
@@ -22,11 +22,12 @@ export default function AddProjectModal({ onClose }) {
   };
   const handleSubmit=(e)=>{
     e.preventDefault();
-    if(!name || !description || !deadline || !createdBy){
+    if(!form.name || !form.description || !form.deadline || !form.createdBy){
         alert("Enter all details");
         return;
     }
     console.log("Form has been submitted");
+    onSave(form);
     onClose();
   }
   return (

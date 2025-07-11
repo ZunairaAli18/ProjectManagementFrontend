@@ -19,3 +19,8 @@ export async function getAllProjects() {
     throw error;
   }
 }
+
+
+export async function saveProject(newProject) {
+   
+}

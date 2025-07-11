@@ -5,12 +5,12 @@ import ProjectCard from '../components/ProjectCard'
 import { getAllProjects } from '../../lib/api/projects';
 import Header from '../components/Header';
 import AddProjectModal from '../components/AddProjectModal';
-import UserHeader from '../components/UserHeader';
+
 
 export default function DashBoard() {
   const [projects, setProjects] = useState([]);
   const [showModal,setShowModal]=useState(false);
-
+  
   useEffect(() => {
     const fetchProjects = async () => {
       try {
@@ -24,7 +24,9 @@ export default function DashBoard() {
 
     fetchProjects();
   }, []);
-
+  const handleSaveProject = async (newProject) => {
+   
+  };
   return (
     <>
       <div className="flex relative ">
@@ -40,7 +42,7 @@ export default function DashBoard() {
       </div>
 
       {showModal && (
-        <AddProjectModal onClose={() => setShowModal(false)} />
+        <AddProjectModal onClose={() => setShowModal(false)} onSave={handleSaveProject} />
       )}
     </>
     

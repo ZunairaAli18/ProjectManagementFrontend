@@ -10,7 +10,8 @@ export default function MembersPanel() {
   useEffect(() => {
     async function loadMembers() {
       const data = await fetchMembers();
-      setMembers(data);
+       console.log("Fetched Members:", data);
+      setMembers(data.users);
     }
     loadMembers();
   }, []);
@@ -30,17 +31,17 @@ export default function MembersPanel() {
   <div className="space-y-2 ">
     {members.map((member) => (
       <div
-        key={member.id}
+        key={member[0]}
         className="flex items-center bg-gray-100 gap-3 p-3 rounded-md hover:bg-[#FBF5DE] cursor-pointer"
-        onClick={()=>setSElectedMember(member)}
+        onClick={()=>setSelectedMember(member)}
       >
         {/* Icon */}
         <div className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center text-white font-bold">
-          {member.name.charAt(0)}
+          {member[1].charAt(0)}
         </div>
 
         {/* Member name */}
-        <span className="font-medium text-gray-800">{member.name}</span>
+        <span className="font-medium text-gray-800">{member[1]}</span>
       </div>
     ))}
   </div>

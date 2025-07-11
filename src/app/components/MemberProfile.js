@@ -14,9 +14,9 @@ export default function MemberProfile({ member }) {
       {/* Profile Icon and Name */}
       <div className="flex flex-col items-center space-y-2 mb-6">
         <div className="w-20 h-20 rounded-full bg-indigo-600 text-white flex items-center justify-center text-3xl font-bold shadow-md">
-          {member.name.charAt(0)}
+          {member[1].charAt(0)}
         </div>
-        <h2 className="text-2xl font-semibold text-gray-800">{member.name}</h2>
+        <h2 className="text-2xl font-semibold text-gray-800">{member[1]}</h2>
       </div>
 
       {/* Divider */}
@@ -24,11 +24,13 @@ export default function MemberProfile({ member }) {
 
       {/* Profile Details */}
       <div className="w-full space-y-3 text-gray-700">
-        <Detail label="Email" value={member.email} />
-        <Detail label="Age" value={member.age} />
-        <Detail label="Gender" value={member.gender} />
-        <Detail label="Blood Group" value={member.bloodGroup} />
-        <Detail label="Joined" value={member.joined} />
+        <Detail label="UserId" value={member[0]}/>
+        <Detail label="Email" value={member[2]} />
+        <Detail label="Age" value={member[4]} />
+        <Detail label="Gender" value={member[5]} />
+        <Detail label="Blood Group" value={member[6]} />
+        <Detail label="Joined" value={member[7]} />
+        <Detail label="Modified" value={member[8]}/>
       </div>
     </div>
   );
