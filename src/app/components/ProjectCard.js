@@ -1,7 +1,10 @@
 'use client';
 import Link from 'next/link';
+import { useState } from 'react';
+import Board from './Board'; // Assuming you have a Board component for tasks
 
 export default function ProjectCard({ project }) {
+  const [isOpen, setIsOpen] = useState(false);
   const getStatusBadge = (status) => {
     if (status === 'Completed') return 'bg-green-100 text-green-800';
     if (status === 'In Progress') return 'bg-blue-100 text-blue-800';
@@ -21,12 +24,14 @@ export default function ProjectCard({ project }) {
   const handleEditProject = () => {
     alert(`Edit project: ${project.title}`);
   };
-
+  const toggleDropdown = () => {
+    setIsOpen(prev => !prev);
+  };
   return (
     <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition mb-6 border border-gray-300">
       {/* Linked part */}
-      <Link href={`/projects/${project.project_id}`}>
-        <div className="cursor-pointer">
+      
+        <div onClick={toggleDropdown} className="cursor-pointer">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-2xl font-semibold text-black">{project.title}</h2>
             <span className={`text-sm px-4 py-1 rounded-full font-medium ${getStatusBadge(project.status)}`}>
@@ -40,7 +45,7 @@ export default function ProjectCard({ project }) {
             <p><strong>Deadline:</strong> {new Date(project.deadline).toLocaleDateString()}</p>
           </div>
         </div>
-      </Link>
+     
 
       {/* Buttons (NOT wrapped in Link) */}
       <div className="flex gap-4 mt-2">
@@ -63,6 +68,13 @@ export default function ProjectCard({ project }) {
           Edit Project
         </button>
       </div>
+      {/* Dropdown Panel */}
+      {isOpen && (
+        <div className="mt-6 border-t pt-4">
+          <h3 className="text-xl font-semibold mb-4 text-gray-800">User Stories and Tasks</h3>
+          <Board />
+        </div>
+      )}
     </div>
   );
 }
