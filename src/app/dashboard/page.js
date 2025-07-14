@@ -5,11 +5,13 @@ import ProjectCard from '../components/ProjectCard'
 import { getAllProjects } from '../../lib/api/projects';
 import Header from '../components/Header';
 import AddProjectModal from '../components/AddProjectModal';
+import AddUserModal from '../components/AddUserModal';
 
 
 export default function DashBoard() {
   const [projects, setProjects] = useState([]);
   const [showModal,setShowModal]=useState(false);
+  const [showUserModal, setShowUserModal] = useState(false);
   
   useEffect(() => {
     const fetchProjects = async () => {
@@ -32,7 +34,7 @@ export default function DashBoard() {
       <div className="flex relative ">
         <SideBar />
         <div className={`flex-1 p-6 bg-[#FFE6E1] min-h-screen transition duration-300 ${showModal ? 'blur-sm' : ''}`}>
-          <Header onAddProjectClick={() => setShowModal(true)} />
+          <Header onAddProjectClick={() => setShowModal(true)} onAddUserClick={() => setShowUserModal(true)} />
           {/* <UserHeader/> */}
           {/* <h1 className="text-3xl font-bold text-black mb-6">All Projects</h1> */}
           {projects.map((project, index) => (
@@ -43,6 +45,9 @@ export default function DashBoard() {
 
       {showModal && (
         <AddProjectModal onClose={() => setShowModal(false)} onSave={handleSaveProject} />
+      )}
+      {showUserModal && (
+          <AddUserModal onClose={() => setShowUserModal(false)} />
       )}
     </>
     
