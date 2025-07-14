@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { createUser } from '@/lib/api/api';
 
-export default function AddUserModal({ onClose, onSave }) {
+export default function AddUserModal({ onClose }) {
   const [form, setForm] = useState({
     name: '',
     email: '',
@@ -37,7 +37,6 @@ export default function AddUserModal({ onClose, onSave }) {
     try {
       const result = await createUser(form);
       alert(result.message);
-      onSave && onSave(form); // optional callback
       onClose();
     } catch (error) {
       alert(error.message);
@@ -143,6 +142,7 @@ export default function AddUserModal({ onClose, onSave }) {
           </button>
           <button
             type="submit"
+            onClick={handleSubmit}
             className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
           >
             Save User
