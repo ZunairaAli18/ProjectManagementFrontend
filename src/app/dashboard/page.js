@@ -1,10 +1,11 @@
 'use client';
+
 import { useEffect, useState } from 'react';
 import SideBar from '../components/SideBar';
 import ProjectCard from '../components/ProjectCard';
 import Header from '../components/Header';
 import AddProjectModal from '../components/AddProjectModal';
-// import { getAllProjects } from '../../lib/api/projects'; // Commented for testing
+// import { getAllProjects } from '../../lib/api/projects'; // Uncomment when backend is ready
 
 export default function DashBoard() {
   const [projects, setProjects] = useState([]);
@@ -46,6 +47,8 @@ export default function DashBoard() {
         ];
 
         setProjects(data);
+
+        // When backend ready:
         // const data = await getAllProjects();
         // setProjects(data);
       } catch (err) {
@@ -58,25 +61,34 @@ export default function DashBoard() {
   }, []);
 
   const handleSaveProject = async (newProject) => {
-    // You can update this to push new project into `projects` state
+    // Logic to save project goes here
     // setProjects([...projects, newProject]);
   };
 
   return (
     <>
       <div className="flex relative">
+        {/* Sidebar */}
         <SideBar />
+
+        {/* Main content area */}
         <div className={`flex-1 p-6 bg-[#FFE6E1] min-h-screen transition duration-300 ${showModal ? 'blur-sm' : ''}`}>
+          {/* Header */}
           <Header onAddProjectClick={() => setShowModal(true)} />
-          
-          {projects.map((project, index) => (
-            <ProjectCard key={index} project={project} />
-          ))}
+          <div className="h-[calc(100vh-120px)] overflow-y-auto pr-2">
+            {projects.map((project, index) => (
+              <ProjectCard key={index} project={project} />
+            ))}
+          </div>
         </div>
       </div>
 
+      {/* Modal for Add Project */}
       {showModal && (
-        <AddProjectModal onClose={() => setShowModal(false)} onSave={handleSaveProject} />
+        <AddProjectModal
+          onClose={() => setShowModal(false)}
+          onSave={handleSaveProject}
+        />
       )}
     </>
   );
