@@ -6,22 +6,22 @@ import ProjectCard from '../components/ProjectCard';
 import Header from '../components/Header';
 import AddProjectModal from '../components/AddProjectModal';
 import AddUserModal from '../components/AddUserModal';
-import SingleProjectMembersPanel from '../components/SingleProjectMembersPanel'; // Import member panel
-
+import MembersPanel from '../components/MembersPanel'; // ✅ Import
 
 export default function DashBoard() {
   const [projects, setProjects] = useState([]);
-  const [showModal,setShowModal]=useState(false);
+  const [showModal, setShowModal] = useState(false);
   const [showUserModal, setShowUserModal] = useState(false);
-   const [selectedProjectId, setSelectedProjectId] = useState(null);
-  const [showMembersModal, setShowMembersModal] = useState(false);
-  
+  const [showMembersPanel, setShowMembersPanel] = useState(false); // ✅
+  const [selectedProjectId, setSelectedProjectId] = useState(null); // ✅
+
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        // Dummy test data
+        // Dummy test data (unchanged)
         const data = [
           {
+            project_id: 1,
             title: "Project Management System",
             created_by: "Ali Raza",
             created_at: "2025-07-10T10:30:00Z",
@@ -29,6 +29,7 @@ export default function DashBoard() {
             deadline: "2025-08-15",
           },
           {
+            project_id: 2,
             title: "Website Redesign",
             created_by: "Sarah Khan",
             created_at: "2025-06-22T14:00:00Z",
@@ -36,6 +37,7 @@ export default function DashBoard() {
             deadline: "2025-07-05",
           },
           {
+            project_id: 3,
             title: "Mobile App Launch",
             created_by: "Ahmed Faraz",
             created_at: "2025-06-01T08:15:00Z",
@@ -43,6 +45,7 @@ export default function DashBoard() {
             deadline: "2025-08-01",
           },
           {
+            project_id: 4,
             title: "Employee Payroll System",
             created_by: "Muhammad Hadi",
             created_at: "2025-08-02T09:17:00Z",
@@ -50,12 +53,7 @@ export default function DashBoard() {
             deadline: "2025-09-20",
           },
         ];
-
         setProjects(data);
-
-        // When backend ready:
-        // const data = await getAllProjects();
-        // setProjects(data);
       } catch (err) {
         console.error('Error fetching projects:', err.message);
         alert('Could not load projects. Please try again.');
@@ -75,37 +73,49 @@ export default function DashBoard() {
   };
 
   const handleSaveProject = async (newProject) => {
-    // Logic to save project goes here
     // setProjects([...projects, newProject]);
+  };
+
+  const handleAssignMemberClick = (projectId) => {
+    setSelectedProjectId(projectId);
+    setShowMembersPanel(true);
   };
 
   return (
     <>
       <div className="flex relative">
-        {/* Sidebar */}
         <SideBar />
 
-        {/* Main content area */}
-        <div className={`flex-1 p-6 bg-[#FFE6E1] min-h-screen transition duration-300 ${showModal ? 'blur-sm' : ''}`}>
-          {/* Header */}
+        <div className={`flex-1 p-6 bg-[#FFE6E1] min-h-screen transition duration-300 ${(showModal || showUserModal || showMembersPanel) ? 'blur-sm' : ''}`}>
           <Header onAddProjectClick={() => setShowModal(true)} />
           <div className="h-[calc(100vh-120px)] overflow-y-auto pr-2">
             {projects.map((project, index) => (
-              <ProjectCard key={index} project={project} onViewMembers={handleViewMembers}/>
+              <ProjectCard
+                key={index}
+                project={project}
+                onAssignMemberClick={handleAssignMemberClick} // ✅ pass click handler
+              />
             ))}
           </div>
         </div>
       </div>
 
-      {/* Modal for Add Project */}
       {showModal && (
         <AddProjectModal
           onClose={() => setShowModal(false)}
           onSave={handleSaveProject}
         />
       )}
+
       {showUserModal && (
-          <AddUserModal onClose={() => setShowUserModal(false)} />
+        <AddUserModal onClose={() => setShowUserModal(false)} />
+      )}
+
+      {showMembersPanel && (
+        <MembersPanel
+          projectId={selectedProjectId}
+          onClose={() => setShowMembersPanel(false)}
+        />
       )}
       {/* Members Modal */}
       {showMembersModal && (

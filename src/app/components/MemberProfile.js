@@ -11,7 +11,6 @@ export default function MemberProfile({ member }) {
 
   return (
     <div className="h-full p-6 flex flex-col items-center bg-gradient-to-b from-white to-gray-100 rounded-lg shadow-inner">
-      {/* Profile Icon and Name */}
       <div className="flex flex-col items-center space-y-2 mb-6">
         <div className="w-20 h-20 rounded-full bg-indigo-600 text-white flex items-center justify-center text-3xl font-bold shadow-md">
           {member[1].charAt(0)}
@@ -19,24 +18,21 @@ export default function MemberProfile({ member }) {
         <h2 className="text-2xl font-semibold text-gray-800">{member[1]}</h2>
       </div>
 
-      {/* Divider */}
       <div className="w-full border-t border-gray-300 mb-4"></div>
 
-      {/* Profile Details */}
       <div className="w-full space-y-3 text-gray-700">
-        <Detail label="UserId" value={member[0]}/>
+        <Detail label="UserId" value={member[0]} />
         <Detail label="Email" value={member[2]} />
         <Detail label="Age" value={member[4]} />
         <Detail label="Gender" value={member[5]} />
         <Detail label="Blood Group" value={member[6]} />
         <Detail label="Joined" value={member[7]} />
-        <Detail label="Modified" value={member[8]}/>
+        <Detail label="Modified" value={member[8]} />
       </div>
     </div>
   );
 }
 
-// Reusable detail line
 function Detail({ label, value }) {
   return (
     <div className="flex justify-between text-sm md:text-base">
