@@ -1,19 +1,48 @@
-import { useState,useEffect } from "react";
+'use client';
+import { useState, useEffect } from "react";
+import { addProject } from "@/lib/api/projects";
 
-export default function AddProjectModal({ onClose, onSave }) {
-    const [form, setForm] = useState({
+export default function AddProjectModal({ onClose, onSave, projectToEdit }) {
+  const [form, setForm] = useState({
     name: '',
     deadline: '',
     createdBy: '',
-    createdAt: ''
+    createdById: '',
+    createdAt: '',
+    status_id: 2,
   });
-  // Set createdAt to current date-time when modal opens
+
   useEffect(() => {
-    const now = new Date().toISOString().slice(0, 16); // e.g., "2025-07-11T10:45"
+    const now = new Date().toISOString().slice(0, 16); // e.g., 2025-07-15T12:34
     const user = JSON.parse(localStorage.getItem('user'));
-   
-    setForm(prev => ({ ...prev, createdAt: now , createdBy: user?.name || ''}));
-  }, []);
+
+    if (!user) {
+      alert("User not found in localStorage.");
+      return;
+    }
+
+    if (projectToEdit) {
+      const parsedCreatedAt = new Date(projectToEdit.created_at).toISOString().slice(0, 16);
+      const parsedDeadline = new Date(projectToEdit.deadline).toISOString().slice(0, 10);
+
+      setForm({
+        name: projectToEdit.title || '',
+        deadline: parsedDeadline,
+        createdBy: user[1] || '',
+        createdById: user[0] || '',
+        createdAt: parsedCreatedAt,
+        status_id: 2,
+      });
+    } else {
+      setForm(prev => ({
+        ...prev,
+        createdAt: now,
+        createdBy: user[1],
+        createdById: user[0],
+        status_id: 2,
+      }));
+    }
+  }, [projectToEdit]);
 
   const handleChange = (e) => {
     setForm(prev => ({
@@ -21,21 +50,43 @@ export default function AddProjectModal({ onClose, onSave }) {
       [e.target.name]: e.target.value
     }));
   };
-  const handleSubmit=(e)=>{
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if(!form.name || !form.description || !form.deadline || !form.createdBy){
-        alert("Enter all details");
-        return;
+
+    const { name, deadline, createdById, status_id } = form;
+
+    if (!name || !deadline || !createdById) {
+      alert("Enter all required details");
+      return;
     }
-    console.log("Form has been submitted");
-    onSave(form);
-    onClose();
-  }
+
+    const payload = {
+      title: name,
+      deadline: deadline,
+      created_by: parseInt(createdById),
+      status_id: status_id
+    };
+
+    console.log("Submitting payload:", payload);
+
+    try {
+      await addProject(payload);
+      console.log("Project saved successfully");
+      onSave();
+      onClose();
+    } catch (err) {
+      alert("Failed to save project: " + err.message);
+    }
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm">
-      <div className="bg-[#F0E4D3] p-6 rounded-lg shadow-lg w-[90%] max-w-2xl h-[600px] relative" >
-        <h2 className="text-4xl font-bold mb-8">Add New Project</h2>
-        {/* Replace with your actual form */}
+      <div className="bg-[#F0E4D3] p-6 rounded-lg shadow-lg w-[90%] max-w-2xl h-[600px] relative">
+        <h2 className="text-4xl font-bold mb-8">
+          {projectToEdit ? "Edit Project" : "Add New Project"}
+        </h2>
+
         <input
           type="text"
           name="name"
@@ -46,7 +97,7 @@ export default function AddProjectModal({ onClose, onSave }) {
         />
 
         <input
-          type="datetime-local"
+          type="date"
           name="deadline"
           value={form.deadline}
           onChange={handleChange}
@@ -58,7 +109,7 @@ export default function AddProjectModal({ onClose, onSave }) {
           name="createdBy"
           placeholder="Created By"
           value={form.createdBy}
-          onChange={handleChange}
+          readOnly
           className="w-full h-[50px] bg-blue-100 border px-3 py-2 mb-8 rounded-lg shadow-lg"
         />
 
@@ -69,6 +120,7 @@ export default function AddProjectModal({ onClose, onSave }) {
           readOnly
           className="w-full h-[50px] bg-blue-100 border px-3 py-2 mb-8 rounded-lg shadow-lg cursor-not-allowed"
         />
+
         <div className="flex justify-end gap-2">
           <button onClick={onClose} className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Cancel</button>
           <button onClick={handleSubmit} className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Save</button>

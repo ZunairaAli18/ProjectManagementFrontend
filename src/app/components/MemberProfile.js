@@ -14,9 +14,9 @@ export default function MemberProfile({ member }) {
       {/* Profile Icon and Name */}
       <div className="flex flex-col items-center space-y-2 mb-6">
         <div className="w-20 h-20 rounded-full bg-indigo-600 text-white flex items-center justify-center text-3xl font-bold shadow-md">
-          {member[1].charAt(0)}
+          {member.name?.charAt(0) ?? '?'}
         </div>
-        <h2 className="text-2xl font-semibold text-gray-800">{member[1]}</h2>
+        <h2 className="text-2xl font-semibold text-gray-800">{member.name}</h2>
       </div>
 
       {/* Divider */}
@@ -24,13 +24,14 @@ export default function MemberProfile({ member }) {
 
       {/* Profile Details */}
       <div className="w-full space-y-3 text-gray-700">
-        <Detail label="UserId" value={member[0]}/>
-        <Detail label="Email" value={member[2]} />
-        <Detail label="Age" value={member[4]} />
-        <Detail label="Gender" value={member[5]} />
-        <Detail label="Blood Group" value={member[6]} />
-        <Detail label="Joined" value={member[7]} />
-        <Detail label="Modified" value={member[8]}/>
+        <Detail label="UserId" value={member.user_id} />
+        <Detail label="Name" value={member.name} />
+        <Detail label="Email" value={member.email} />
+        <Detail label="Age" value={member.age} />
+        <Detail label="Gender" value={member.gender} />
+        <Detail label="Blood Group" value={member.blood_group} />
+        <Detail label="Joined" value={formatDate(member.joined_at)} />
+        <Detail label="Modified" value={formatDate(member.modified_at)} />
       </div>
     </div>
   );
@@ -41,7 +42,14 @@ function Detail({ label, value }) {
   return (
     <div className="flex justify-between text-sm md:text-base">
       <span className="font-medium text-gray-600">{label}:</span>
-      <span className="text-gray-800">{value}</span>
+      <span className="text-gray-800">{value ?? '-'}</span>
     </div>
   );
+}
+
+// Optional: format ISO string date to readable form
+function formatDate(dateString) {
+  if (!dateString) return '-';
+  const date = new Date(dateString);
+  return date.toLocaleDateString(); // Or customize as needed
 }

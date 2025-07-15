@@ -1,15 +1,27 @@
 'use client';
 import { useEffect, useState } from 'react';
 import MemberProfile from './MemberProfile';
+import { fetchUserProfile } from '@/lib/api/api';
 
 export default function ProfilePanel() {
-  const [user, setUser] = useState(null);
+   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
+    const stored = localStorage.getItem('user');
+    if (stored) {
       try {
-        setUser(JSON.parse(storedUser));
+        const parsedUser = JSON.parse(stored);
+        const userId = parsedUser?.[0]; // assuming [id, name, email...]
+
+        if (userId) {
+          fetchUserProfile(userId)
+            .then((fetchedUser) => {
+              setUser(fetchedUser);
+            })
+            .catch((err) => {
+              console.error('Failed to fetch user from backend:', err.message);
+            });
+        }
       } catch (err) {
         console.error('Failed to parse user from localStorage', err);
       }

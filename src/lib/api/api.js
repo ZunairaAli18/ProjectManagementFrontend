@@ -57,3 +57,29 @@ export async function loginUser(credentials) {
     throw error;
   }
 }
+
+
+// lib/api/user.js
+export async function fetchUserProfile(userId) {
+  try {
+    const res = await fetch('http://localhost:5000/my-profile', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ user_id: userId }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok || !data.Success) {
+      throw new Error(data.error || 'Failed to fetch user profile');
+    }
+
+    return data.profile;
+
+  } catch (err) {
+    console.error('Fetch profile error:', err.message);
+    throw err;
+  }
+}

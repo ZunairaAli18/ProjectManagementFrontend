@@ -7,6 +7,7 @@ import Header from '../components/Header';
 import AddProjectModal from '../components/AddProjectModal';
 import AddUserModal from '../components/AddUserModal';
 import SingleProjectMembersPanel from '../components/SingleProjectMembersPanel'; // Import member panel
+import { getAllProjects } from '@/lib/api/projects';
 
 
 export default function DashBoard() {
@@ -15,56 +16,24 @@ export default function DashBoard() {
   const [showUserModal, setShowUserModal] = useState(false);
    const [selectedProjectId, setSelectedProjectId] = useState(null);
   const [showMembersModal, setShowMembersModal] = useState(false);
-  
-  useEffect(() => {
-    const fetchProjects = async () => {
-      try {
-        // Dummy test data
-        const data = [
-          {
-            title: "Project Management System",
-            created_by: "Ali Raza",
-            created_at: "2025-07-10T10:30:00Z",
-            status: "In Progress",
-            deadline: "2025-08-15",
-          },
-          {
-            title: "Website Redesign",
-            created_by: "Sarah Khan",
-            created_at: "2025-06-22T14:00:00Z",
-            status: "Completed",
-            deadline: "2025-07-05",
-          },
-          {
-            title: "Mobile App Launch",
-            created_by: "Ahmed Faraz",
-            created_at: "2025-06-01T08:15:00Z",
-            status: "Not Started",
-            deadline: "2025-08-01",
-          },
-          {
-            title: "Employee Payroll System",
-            created_by: "Muhammad Hadi",
-            created_at: "2025-08-02T09:17:00Z",
-            status: "Paused",
-            deadline: "2025-09-20",
-          },
-        ];
+  const [projectToEdit, setProjectToEdit] = useState(null);
+ useEffect(() => {
+  const fetchProjects = async () => {
+    try {
+      const data = await getAllProjects(); // Fetch from backend
+      setProjects(data);
+      console.log("projects")
+      console.log(data)
+    } catch (err) {
+      console.error('Error fetching projects:', err.message);
+      alert('Could not load projects. Please try again.');
+    }
+  };
 
-        setProjects(data);
-
-        // When backend ready:
-        // const data = await getAllProjects();
-        // setProjects(data);
-      } catch (err) {
-        console.error('Error fetching projects:', err.message);
-        alert('Could not load projects. Please try again.');
-      }
-    };
-
-    fetchProjects();
-  }, []);
+  fetchProjects();
+}, []);
   const handleViewMembers = (projectId) => {
+    console.log(projectId)
     setSelectedProjectId(projectId);
     setShowMembersModal(true);
   };
@@ -79,6 +48,12 @@ export default function DashBoard() {
     // setProjects([...projects, newProject]);
   };
 
+const handleEditProject = (project) => {
+  setProjectToEdit(project);
+  setShowModal(true);
+};
+
+
   return (
     <>
       <div className="flex relative">
@@ -91,7 +66,7 @@ export default function DashBoard() {
           <Header onAddProjectClick={() => setShowModal(true)} onAddUserClick={()=>setShowUserModal(true)}/>
           <div className="h-[calc(100vh-120px)] overflow-y-auto pr-2">
             {projects.map((project, index) => (
-              <ProjectCard key={index} project={project} onViewMembers={handleViewMembers}/>
+              <ProjectCard key={index} project={project} onViewMembers={handleViewMembers} onEdit={() => handleEditProject(project)}/>
             ))}
           </div>
         </div>
@@ -100,8 +75,12 @@ export default function DashBoard() {
       {/* Modal for Add Project */}
       {showModal && (
         <AddProjectModal
-          onClose={() => setShowModal(false)}
+          onClose={() => {
+      setShowModal(false);
+      setProjectToEdit(null); // clear edit state
+    }}
           onSave={handleSaveProject}
+              projectToEdit={projectToEdit}
         />
       )}
       {showUserModal && (

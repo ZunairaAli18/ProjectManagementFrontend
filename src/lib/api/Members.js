@@ -10,6 +10,7 @@ export async function fetchMembers() {
     }
 
     const data = await res.json();
+    console.log(data)
     console.log('hello');
     return data;
 
