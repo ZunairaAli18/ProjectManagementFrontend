@@ -25,7 +25,7 @@ export default function SideBar() {
           <Link href="/members" className="py-4 hover:text-blue-300">
             Members
           </Link>
-          <Link href="/profile" className="py-4 hover:text-blue-300">
+          <Link href="/myprofile" className="py-4 hover:text-blue-300">
             My Profile
           </Link>
           <Link href="/settings" className="py-4 hover:text-blue-300">

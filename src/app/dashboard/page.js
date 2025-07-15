@@ -76,7 +76,7 @@ export default function DashBoard() {
         {/* Main content area */}
         <div className={`flex-1 p-6 bg-[#FFE6E1] min-h-screen transition duration-300 ${showModal ? 'blur-sm' : ''}`}>
           {/* Header */}
-          <Header onAddProjectClick={() => setShowModal(true)} />
+          <Header onAddProjectClick={() => setShowModal(true)} onAddUserClick={()=>setShowUserModal(true)}/>
           <div className="h-[calc(100vh-120px)] overflow-y-auto pr-2">
             {projects.map((project, index) => (
               <ProjectCard key={index} project={project} />
@@ -84,7 +84,7 @@ export default function DashBoard() {
           </div>
         </div>
       </div>
-
+     
       {/* Modal for Add Project */}
       {showModal && (
         <AddProjectModal

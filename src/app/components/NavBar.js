@@ -11,7 +11,7 @@ export default function Navbar(){
             {/*Left logo+Appname*/}
             <div className="ml-1 flex items-center space-x-6">
             <Link href="/" className="flex items-center space-x-6">
-            <Image src='/logo.png' width={52} height={52}/>
+            <Image src='/logo.png' alt="img" width={52} height={52}/>
             <span className="text-[40px] font-bold text-white">Projectify</span>
             </Link>
             </div>
