@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 import Board from './Board'; // Assuming you have a Board component for tasks
 
-export default function ProjectCard({ project }) {
+export default function ProjectCard({ project, onViewMembers }) {
   
   const [isOpen, setIsOpen] = useState(false);
   const getStatusBadge = (status) => {
@@ -13,11 +13,7 @@ export default function ProjectCard({ project }) {
     return 'bg-red-100 text-red-800'; // Not Started
   };
 
-  // Placeholder handlers for now
-  const handleViewMembers = () => {
-    alert(`View members for: ${project.title}`);
-  };
-
+  
   const handleAssignMember = () => {
     alert(`Assign members to: ${project.title}`);
   };
@@ -28,6 +24,9 @@ export default function ProjectCard({ project }) {
 
   const handleAttachmentFetch = () => {
     alert(`View attachments for: ${project.title}`);
+  };
+  const handleViewMembers = () => {
+    onViewMembers(project.project_id); // trigger parent modal with ID
   };
 
   const toggleDropdown = () => {
