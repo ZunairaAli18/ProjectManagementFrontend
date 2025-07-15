@@ -75,14 +75,6 @@ export default function DashBoard() {
 
         {/* Main content area */}
         <div className={`flex-1 p-6 bg-[#FFE6E1] min-h-screen transition duration-300 ${showModal ? 'blur-sm' : ''}`}>
-<<<<<<< HEAD
-          <Header onAddProjectClick={() => setShowModal(true)} onAddUserClick={() => setShowUserModal(true)} />
-          {/* <UserHeader/> */}
-          {/* <h1 className="text-3xl font-bold text-black mb-6">All Projects</h1> */}
-          {projects.map((project, index) => (
-            <ProjectCard key={index} project={project} />
-          ))}
-=======
           {/* Header */}
           <Header onAddProjectClick={() => setShowModal(true)} />
           <div className="h-[calc(100vh-120px)] overflow-y-auto pr-2">
@@ -90,7 +82,6 @@ export default function DashBoard() {
               <ProjectCard key={index} project={project} />
             ))}
           </div>
->>>>>>> Ali2
         </div>
       </div>
 
