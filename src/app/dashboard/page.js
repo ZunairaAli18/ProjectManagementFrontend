@@ -62,15 +62,6 @@ export default function DashBoard() {
 
     fetchProjects();
   }, []);
-  const handleViewMembers = (projectId) => {
-    setSelectedProjectId(projectId);
-    setShowMembersModal(true);
-  };
-
-  const closeMembersModal = () => {
-    setShowMembersModal(false);
-    setSelectedProjectId(null);
-  };
 
   const handleSaveProject = async (newProject) => {
     // setProjects([...projects, newProject]);
@@ -116,20 +107,6 @@ export default function DashBoard() {
           projectId={selectedProjectId}
           onClose={() => setShowMembersPanel(false)}
         />
-      )}
-      {/* Members Modal */}
-      {showMembersModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-black/30">
-          <div className="bg-white rounded-lg shadow-xl w-11/12 max-w-5xl max-h-[90vh] overflow-y-auto p-6 relative">
-            <button
-              onClick={closeMembersModal}
-              className="absolute top-4 right-4 text-gray-600 hover:text-red-500 text-xl font-bold"
-            >
-              ×
-            </button>
-            <SingleProjectMembersPanel projectId={selectedProjectId} />
-          </div>
-        </div>
       )}
     </>
   );

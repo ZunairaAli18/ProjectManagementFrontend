@@ -10,11 +10,7 @@ export default function ProjectCard({ project, onAssignMemberClick }) {
     if (status === 'Paused') return 'bg-gray-200 text-gray-800';
     return 'bg-red-100 text-red-800';
   };
-
-  const handleViewMembers = () => {
-    alert(`View members for: ${project.title}`);
-  };
-
+  
   const handleAssignMember = () => {
     onAssignMemberClick(project.project_id); // ✅ updated here
   };
