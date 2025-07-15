@@ -45,7 +45,14 @@ export async function loginUser(credentials) {
     if (!response.ok) {
       throw new Error(result.error || 'Login failed');
     }
-    localStorage.setItem('user', JSON.stringify(result.user));    return result;
+    const userArray = [
+  result.user.user_id,  // [0]
+  result.user.name,     // [1]
+  result.user.email,    // [2]
+  result.user.role_id   // [3]
+];
+    console.log(userArray)
+    localStorage.setItem('user', JSON.stringify(userArray));    return result;
   } catch (error) {
     throw error;
   }
