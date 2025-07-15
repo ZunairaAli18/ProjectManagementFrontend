@@ -3,7 +3,6 @@ import { useState,useEffect } from "react";
 export default function AddProjectModal({ onClose, onSave }) {
     const [form, setForm] = useState({
     name: '',
-    description: '',
     deadline: '',
     createdBy: '',
     createdAt: ''
@@ -11,7 +10,9 @@ export default function AddProjectModal({ onClose, onSave }) {
   // Set createdAt to current date-time when modal opens
   useEffect(() => {
     const now = new Date().toISOString().slice(0, 16); // e.g., "2025-07-11T10:45"
-    setForm(prev => ({ ...prev, createdAt: now }));
+    const user = JSON.parse(localStorage.getItem('user'));
+   
+    setForm(prev => ({ ...prev, createdAt: now , createdBy: user?.name || ''}));
   }, []);
 
   const handleChange = (e) => {
@@ -42,14 +43,6 @@ export default function AddProjectModal({ onClose, onSave }) {
           value={form.name}
           onChange={handleChange}
           className="w-full h-[50px] bg-blue-100 border px-3 py-2 mb-8 rounded-lg shadow-lg"
-        />
-
-        <textarea
-          name="description"
-          placeholder="Project Description"
-          value={form.description}
-          onChange={handleChange}
-          className="w-full h-[80px] bg-blue-100 border px-3 py-2 mb-8 rounded-lg shadow-lg"
         />
 
         <input

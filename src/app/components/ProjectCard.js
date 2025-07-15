@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Board from './Board'; // Assuming you have a Board component for tasks
 
 export default function ProjectCard({ project }) {
+  
   const [isOpen, setIsOpen] = useState(false);
   const getStatusBadge = (status) => {
     if (status === 'Completed') return 'bg-green-100 text-green-800';
@@ -71,7 +72,9 @@ export default function ProjectCard({ project }) {
       {/* Dropdown Panel */}
       {isOpen && (
         <div className="mt-6 border-t pt-4">
-          <h3 className="text-xl font-semibold mb-4 text-gray-800">User Stories and Tasks</h3>
+<div className="flex items-center gap-2 bg-blue-200 text-blue-800 px-6 py-4 rounded-xl shadow-lg">
+  <h3 className="text-lg font-bold  text-blue-900">📋 User Stories and Tasks</h3>
+</div>
           <Board />
         </div>
       )}

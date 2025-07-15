@@ -20,7 +20,7 @@ export async function createUser(form){
     if (!response.ok) {
       throw new Error(result.error || 'Something went wrong');
     }
-
+    
     return result;
   } catch (error) {
     throw error;
@@ -45,8 +45,7 @@ export async function loginUser(credentials) {
     if (!response.ok) {
       throw new Error(result.error || 'Login failed');
     }
-
-    return result;
+    localStorage.setItem('user', JSON.stringify(result.user));    return result;
   } catch (error) {
     throw error;
   }
