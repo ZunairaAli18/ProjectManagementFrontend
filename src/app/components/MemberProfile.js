@@ -1,6 +1,6 @@
 'use client';
 
-export default function MemberProfile({ member }) {
+export default function MemberProfile({ member ,hideTimestamps}) {
   if (!member) {
     return (
       <div className="h-full flex items-center justify-center text-gray-500 text-lg">
@@ -30,8 +30,12 @@ export default function MemberProfile({ member }) {
         <Detail label="Age" value={member.age} />
         <Detail label="Gender" value={member.gender} />
         <Detail label="Blood Group" value={member.blood_group} />
-        <Detail label="Joined" value={formatDate(member.joined_at)} />
-        <Detail label="Modified" value={formatDate(member.modified_at)} />
+        {hideTimestamps===false && (
+          <>
+            <Detail label="Joined" value={formatDate(member.joined_at)} />
+            <Detail label="Modified" value={formatDate(member.modified_at)} />
+          </>
+        )}
       </div>
     </div>
   );

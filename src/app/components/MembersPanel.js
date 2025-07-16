@@ -48,7 +48,7 @@ export default function MembersPanel() {
 
         {/* Right 60% */}
         <div className="w-[60%] p-4 bg-[#FBF5DE]">
-          <MemberProfile member={selectedMember} />
+          <MemberProfile member={selectedMember} hideTimestamps={false}/>
         </div>
 
       </div>

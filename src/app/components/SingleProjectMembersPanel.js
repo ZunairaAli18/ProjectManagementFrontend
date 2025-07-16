@@ -12,10 +12,9 @@ export default function SingleProjectMembersPanel({ projectId }) {
   useEffect(() => {
     async function fetchMembers() {
       try {
-        console.log(projectId)
-        const data = await getProjectMembers(projectId); // this should now return an array of arrays
+        const data = await getProjectMembers(projectId); // now returns list of dicts
         setMembers(data);
-        
+        console.log("Fetched Members:", data);
         setSelectedMember(data[0] || null);
         setLoading(false);
       } catch (err) {
@@ -39,18 +38,18 @@ export default function SingleProjectMembersPanel({ projectId }) {
           <p className="text-gray-500">No members assigned to this project yet.</p>
         ) : (
           <div className="space-y-3">
-            {members.map((member, idx) => (
+            {members.map((member) => (
               <div
-                key={member[0]} // user_id
+                key={member.user_id}
                 className={`flex items-center gap-3 p-3 rounded-md cursor-pointer hover:bg-yellow-100 ${
-                  selectedMember?.[0] === member[0] ? 'bg-yellow-200 font-semibold' : 'bg-white'
+                  selectedMember?.user_id === member.user_id ? 'bg-yellow-200 font-semibold' : 'bg-white'
                 }`}
                 onClick={() => setSelectedMember(member)}
               >
                 <div className="w-8 h-8 rounded-full bg-indigo-500 text-white flex items-center justify-center font-bold">
-                  {member[1].charAt(0)} {/* name first letter */}
+                  {member.name?.charAt(0).toUpperCase()}
                 </div>
-                <span>{member[1]}</span> {/* name */}
+                <span>{member.name}</span>
               </div>
             ))}
           </div>

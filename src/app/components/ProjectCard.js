@@ -76,7 +76,7 @@ export default function ProjectCard({ project, onViewMembers, onEdit }) {
           Edit Project
         </button>
                 <button
-          onClick={handleViewMembers}
+          onClick={handleAttachmentFetch}
           className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-md text-sm font-semibold"
         >
           View Attachments

@@ -7,23 +7,57 @@ import Header from '../components/Header';
 import AddProjectModal from '../components/AddProjectModal';
 import AddUserModal from '../components/AddUserModal';
 import SingleProjectMembersPanel from '../components/SingleProjectMembersPanel'; // Import member panel
-import { getAllProjects } from '@/lib/api/projects';
-
+import { getAllProjects, getProjectsCreatedByEmail ,getAllMyProjectsByEmail} from '@/lib/api/projects';
+import { useSearchParams } from 'next/navigation';
 
 export default function DashBoard() {
+  const SearchParams = useSearchParams();
   const [projects, setProjects] = useState([]);
   const [showModal,setShowModal]=useState(false);
   const [showUserModal, setShowUserModal] = useState(false);
    const [selectedProjectId, setSelectedProjectId] = useState(null);
   const [showMembersModal, setShowMembersModal] = useState(false);
   const [projectToEdit, setProjectToEdit] = useState(null);
+
+ 
  useEffect(() => {
   const fetchProjects = async () => {
+    const view = SearchParams.get('view'); // 'created', 'my-projects', or undefined
+    const user = JSON.parse(localStorage.getItem('user'));
+    const email = user?.[2];
+    const statusMap = {
+      1: "Paused",
+      2: "Yet to Start",
+      3: "In Progress",
+      4: "Completed"
+    };
+
+    if (!email) {
+      alert("User email not found");
+      return;
+    }
+
     try {
-      const data = await getAllProjects(); // Fetch from backend
-      setProjects(data);
-      console.log("projects")
-      console.log(data)
+      let data = [];
+     console.log(email)
+      if (view === 'created') {
+        data = await getProjectsCreatedByEmail(email);
+      } else if (view === 'myprojects') {
+        data = await getAllMyProjectsByEmail(email); // <-- this is the new API you built
+      } else {
+        data = await getAllProjects();
+      }
+      console.log("Fetched Projects:", data);
+      // Normalize the data: enrich with local user info and convert status_id → status string
+      const normalized = data.map(p => ({
+        ...p,
+        created_by: p.created_by || user[1],
+        created_by_id: p.created_by_id || user[0],
+        status: p.status || statusMap[p.status_id] || "Yet to Start"
+      }));
+      console.log("Normalized Projects:", normalized);
+      setProjects(normalized);
+      console.log('Projects loaded:', normalized);
     } catch (err) {
       console.error('Error fetching projects:', err.message);
       alert('Could not load projects. Please try again.');
@@ -31,7 +65,9 @@ export default function DashBoard() {
   };
 
   fetchProjects();
-}, []);
+}, [SearchParams]);
+
+
   const handleViewMembers = (projectId) => {
     console.log(projectId)
     setSelectedProjectId(projectId);

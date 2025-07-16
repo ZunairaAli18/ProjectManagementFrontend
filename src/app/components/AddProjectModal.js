@@ -23,7 +23,7 @@ export default function AddProjectModal({ onClose, onSave, projectToEdit }) {
 
     if (projectToEdit) {
       setEdit(true)
-      console.log(projectToEdit)
+      console.log("edit",projectToEdit)
       const parsedCreatedAt = new Date(projectToEdit.created_at).toISOString().slice(0, 16);
       const parsedDeadline = new Date(projectToEdit.deadline).toISOString().slice(0, 10);
       
@@ -64,7 +64,7 @@ export default function AddProjectModal({ onClose, onSave, projectToEdit }) {
     console.log("form",form)
     const { name, deadline, createdById, status_id } = form;
 
-    if (!name || !deadline || !createdById) {
+    if (!name || !deadline ) {
       alert("Enter all required details");
       return;
     }

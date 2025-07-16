@@ -16,10 +16,10 @@ export default function SideBar() {
           <Link href="/dashboard" className="py-4 hover:text-blue-300">
             Dashboard
           </Link>
-          <Link href="/my-projects" className="py-4 hover:text-blue-300">
+          <Link href="/dashboard?view=myprojects" className="py-4 hover:text-blue-300">
             My Projects
           </Link>
-          <Link href="/created-projects" className="py-4 hover:text-blue-300">
+          <Link href="/dashboard?view=created" className="py-4 hover:text-blue-300">
             My Created Projects
           </Link>
           <Link href="/members" className="py-4 hover:text-blue-300">

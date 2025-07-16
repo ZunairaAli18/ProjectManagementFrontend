@@ -66,19 +66,9 @@ export async function getProjectMembers(projectId) {
     if (!response.ok) {
       throw new Error(result.error || 'Failed to fetch project members');
     }
+    console.log(result)
 
-    // Format each member into an array
-    const formattedMembers = result.members.map(member => ([
-      member.user_id,
-      member.name,
-      member.email,
-      member.age,
-      member.gender,
-      member.blood_group
-    ]));
-
-    console.log('Formatted Members:', formattedMembers);
-    return formattedMembers;
+    return result.members || []; // assuming the members are returned in `data`
 
   } catch (error) {
     console.error('Fetch Members Error:', error.message);
@@ -113,3 +103,53 @@ export async function updateProject(payload, id) {
     return { success: false, error: error.message };
   }
 }
+
+
+export async function getProjectsCreatedByEmail(email) {
+  try {
+    const res = await fetch('http://localhost:5000/my-projects/created', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email }),
+    });
+
+    if (!res.ok) throw new Error("Failed to fetch projects");
+
+    const data = await res.json();
+    console.log(data)
+    return data.data; // assuming you return projects inside `projects`
+  } catch (err) {
+    console.error("Error fetching created projects:", err.message);
+    return [];
+  }
+}
+
+
+// lib/api/projects.js
+
+export async function getAllMyProjectsByEmail(email) {
+  try {
+    const response = await fetch('http://localhost:5000/my-projects/all', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ email })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || 'Failed to fetch user projects');
+    }
+
+    return data.data || []; // assuming result is wrapped like: { Success: true, projects: [...] }
+  } catch (err) {
+    console.error('getAllMyProjectsByEmail error:', err);
+    return [];
+  }
+}
+
+
