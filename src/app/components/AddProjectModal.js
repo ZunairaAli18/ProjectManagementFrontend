@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from "react";
-import { addProject } from "@/lib/api/projects";
+import { addProject, updateProject } from "@/lib/api/projects";
 
 export default function AddProjectModal({ onClose, onSave, projectToEdit }) {
   const [form, setForm] = useState({
@@ -11,27 +11,35 @@ export default function AddProjectModal({ onClose, onSave, projectToEdit }) {
     createdAt: '',
     status_id: 2,
   });
-
+  const [edit,setEdit]=useState(false)
   useEffect(() => {
     const now = new Date().toISOString().slice(0, 16); // e.g., 2025-07-15T12:34
     const user = JSON.parse(localStorage.getItem('user'));
-
+    
     if (!user) {
       alert("User not found in localStorage.");
       return;
     }
 
     if (projectToEdit) {
+      setEdit(true)
+      console.log(projectToEdit)
       const parsedCreatedAt = new Date(projectToEdit.created_at).toISOString().slice(0, 16);
       const parsedDeadline = new Date(projectToEdit.deadline).toISOString().slice(0, 10);
-
+      
+      const statusMap = {
+  "Paused": 1,
+  "Yet to Start": 2,
+  "In Progress": 3,
+  "Completed": 4
+};
       setForm({
         name: projectToEdit.title || '',
         deadline: parsedDeadline,
-        createdBy: user[1] || '',
-        createdById: user[0] || '',
+        createdBy: projectToEdit.created_by,
+        createdById:  parseInt(projectToEdit.created_by_id),
         createdAt: parsedCreatedAt,
-        status_id: 2,
+        status_id: statusMap[projectToEdit.status] || 2,
       });
     } else {
       setForm(prev => ({
@@ -43,7 +51,7 @@ export default function AddProjectModal({ onClose, onSave, projectToEdit }) {
       }));
     }
   }, [projectToEdit]);
-
+  
   const handleChange = (e) => {
     setForm(prev => ({
       ...prev,
@@ -53,7 +61,7 @@ export default function AddProjectModal({ onClose, onSave, projectToEdit }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    console.log("form",form)
     const { name, deadline, createdById, status_id } = form;
 
     if (!name || !deadline || !createdById) {
@@ -69,10 +77,17 @@ export default function AddProjectModal({ onClose, onSave, projectToEdit }) {
     };
 
     console.log("Submitting payload:", payload);
-
+    
     try {
+    if (edit && projectToEdit?.project_id) {
+      // Editing existing project
+      await updateProject({ title: name, deadline: deadline }, projectToEdit.project_id);
+      console.log("Project updated successfully");
+    } else {
+      // Adding new project
       await addProject(payload);
-      console.log("Project saved successfully");
+      console.log("Project created successfully");
+    }
       onSave();
       onClose();
     } catch (err) {

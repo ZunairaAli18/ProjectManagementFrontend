@@ -86,3 +86,30 @@ export async function getProjectMembers(projectId) {
   }
 }
 
+export async function updateProject(payload, id) {
+  if (!payload || !id) {
+    console.warn('Project ID and payload are required');
+    return { success: false, error: 'Missing project data' };
+  }
+
+  try {
+    const response = await fetch(`http://localhost:5000/${id}/updateProject`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || 'Failed to update project');
+    }
+
+    return { success: true, message: data.message };
+  } catch (error) {
+    console.error('Update Project Error:', error.message);
+    return { success: false, error: error.message };
+  }
+}
