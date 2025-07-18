@@ -1,11 +1,11 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
-export default function AddUserStoryModal({ onClose, onSave, projectId }) {
+export default function AddUserStoryModal({ onClose, onSave, onUpdate, projectId, storyToEdit }) {
   const [form, setForm] = useState({
     title: '',
     description: '',
-    estimatedTime: '',
+    estimated_time: '',
     createdBy: '',
     createdById: '',
     status_id: 2,
@@ -18,12 +18,23 @@ export default function AddUserStoryModal({ onClose, onSave, projectId }) {
       return;
     }
 
-    setForm(prev => ({
-      ...prev,
-      createdBy: user[1],
-      createdById: user[0],
-    }));
-  }, []);
+    if (storyToEdit) {
+      setForm({
+        title: storyToEdit.title || '',
+        description: storyToEdit.description || '',
+        estimated_time: storyToEdit.estimated_time || '',
+        createdBy: user[1],
+        createdById: user[0],
+        status_id: storyToEdit.status_id || 2,
+      });
+    } else {
+      setForm(prev => ({
+        ...prev,
+        createdBy: user[1],
+        createdById: user[0],
+      }));
+    }
+  }, [storyToEdit]);
 
   const handleChange = (e) => {
     setForm(prev => ({
@@ -34,7 +45,7 @@ export default function AddUserStoryModal({ onClose, onSave, projectId }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { title, description, estimatedTime, createdById } = form;
+    const { title, description, estimated_time, createdById } = form;
 
     if (!title || !projectId || !createdById) {
       alert("Please fill all required fields.");
@@ -44,15 +55,18 @@ export default function AddUserStoryModal({ onClose, onSave, projectId }) {
     const payload = {
       title,
       description,
-      estimated_time: estimatedTime,
+      estimated_time,
       project_id: projectId,
       created_by: parseInt(createdById),
-      status_id: 2 // default
+      status_id: 2,
     };
 
-    console.log("Submitting user story payload:", payload);
     try {
-      await onSave(payload); // Parent will handle the POST
+      if (storyToEdit && onUpdate) {
+        await onUpdate(payload, storyToEdit.story_id);
+      } else {
+        await onSave(payload);
+      }
       onClose();
     } catch (err) {
       alert("Failed to save user story: " + err.message);
@@ -62,7 +76,9 @@ export default function AddUserStoryModal({ onClose, onSave, projectId }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm">
       <div className="bg-[#F0E4D3] p-6 rounded-lg shadow-lg w-[90%] max-w-2xl h-[500px] relative">
-        <h2 className="text-4xl font-bold mb-8">Add New Story</h2>
+        <h2 className="text-4xl font-bold mb-8">
+          {storyToEdit ? "Edit Story" : "Add New Story"}
+        </h2>
 
         <input
           type="text"
@@ -83,16 +99,18 @@ export default function AddUserStoryModal({ onClose, onSave, projectId }) {
 
         <input
           type="text"
-          name="estimatedTime"
+          name="estimated_time"
           placeholder="Estimated Time (e.g. 2 hours)"
-          value={form.estimatedTime}
+          value={form.estimated_time}
           onChange={handleChange}
           className="w-full h-[50px] bg-blue-100 border px-3 py-2 mb-8 rounded-lg shadow-lg"
         />
 
         <div className="flex justify-end gap-2">
           <button onClick={onClose} className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Cancel</button>
-          <button onClick={handleSubmit} className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Save</button>
+          <button onClick={handleSubmit} className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+            {storyToEdit ? "Update" : "Save"}
+          </button>
         </div>
       </div>
     </div>

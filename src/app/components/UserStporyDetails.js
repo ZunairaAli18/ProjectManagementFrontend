@@ -1,9 +1,18 @@
 'use client';
+import { X } from 'lucide-react'; 
 
-export default function UserStoryDetails({ story }) {
+export default function UserStoryDetails({ story, onClose }) {
   return (
-    <div className="min-h-screen bg-[#FFF7E9] flex items-center justify-center">
-      <div className="bg-white shadow-xl rounded-xl p-8 w-[600px]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm">
+      <div className="relative bg-[#FFF7E9] shadow-xl rounded-xl p-8 w-[600px]">
+        {/* Close button */}
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 text-gray-600 hover:text-black"
+        >
+          <X size={24} />
+        </button>
+
         {/* Title */}
         <div className="flex flex-col items-center mb-6">
           <h1 className="text-2xl font-bold text-gray-900">{story?.title}</h1>
@@ -57,4 +66,3 @@ export default function UserStoryDetails({ story }) {
     </div>
   );
 }
-
