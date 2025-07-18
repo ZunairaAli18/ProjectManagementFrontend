@@ -8,7 +8,7 @@ export default function UserStoryDetails({ story, onClose }) {
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-gray-600 hover:text-black"
+          className="absolute top-4 right-4 text-gray-400 hover:text-black"
         >
           <X size={24} />
         </button>

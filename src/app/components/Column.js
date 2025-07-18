@@ -70,13 +70,13 @@ export default function Column({ title, tasks, onDragStart, onDrop, projectId, o
 
       {showDetailsModal && selectedStory && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm">
-          <UserStporyDetails story={selectedStory} />
-          <button
+          <UserStporyDetails story={selectedStory} onClose={()=>setShowDetailsModal(false)} />
+          {/* <button
             onClick={() => setShowDetailsModal(false)}
             className="absolute top-4 right-6 text-white text-2xl font-bold"
           >
             ×
-          </button>
+          </button> */}
         </div>
       )}
     </>
