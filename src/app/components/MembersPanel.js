@@ -1,20 +1,20 @@
 'use client';
 import MemberProfile from "./MemberProfile";
 import { useState, useEffect } from "react";
-import { fetchMembers } from "../../lib/api/Members";
+import { fetchMembers,getUnassignedUsers } from "../../lib/api/Members";
 
-export default function MembersPanel() {
+export default function MembersPanel({ projectId }) {
   const [members, setMembers] = useState([]);
   const [selectedMember, setSelectedMember] = useState(null);
 
   useEffect(() => {
     async function loadMembers() {
-      const data = await fetchMembers();
+      const data = projectId ? await getUnassignedUsers(projectId) : await fetchMembers(); 
       console.log("Fetched Members:", data);
       setMembers(data.users); // Now data.users is an array of objects
     }
     loadMembers();
-  }, []);
+  }, [projectId]);
 
   return (
     <div className="fixed top-25 bottom-10 left-110 bg-white rounded-lg border shadow-lg z-50 overflow-hidden" style={{ width: '1200px', height: '80vh' }}>
@@ -48,7 +48,15 @@ export default function MembersPanel() {
 
         {/* Right 60% */}
         <div className="w-[60%] p-4 bg-[#FBF5DE]">
-          <MemberProfile member={selectedMember} hideTimestamps={false}/>
+         {selectedMember && (
+  <MemberProfile
+    key={selectedMember.user_id}
+    member={selectedMember}
+    hideTimestamps={false}
+    projectId={projectId}
+  />
+)}
+
         </div>
 
       </div>

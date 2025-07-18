@@ -8,7 +8,7 @@ export default function SingleProjectMembersPanel({ projectId }) {
   const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedMember, setSelectedMember] = useState(null);
-
+  
   useEffect(() => {
     async function fetchMembers() {
       try {
@@ -27,9 +27,11 @@ export default function SingleProjectMembersPanel({ projectId }) {
   }, [projectId]);
 
   return (
-    <div className="flex w-full h-[70vh]">
+    <div className="fixed top-25 bottom-10 left-110 bg-white rounded-lg border shadow-lg z-50 overflow-hidden" style={{ width: '1200px', height: '80vh' }}>
+            <div className="flex h-full">
+
       {/* Left Panel */}
-      <div className="w-[40%] border-r overflow-y-auto p-4 bg-gray-100">
+        <div className="w-[40%] border-r overflow-y-auto p-4">
         <h2 className="text-xl font-semibold text-gray-800 mb-4">Members</h2>
 
         {loading ? (
@@ -59,13 +61,14 @@ export default function SingleProjectMembersPanel({ projectId }) {
       {/* Right Panel */}
       <div className="w-[60%] p-6 bg-white">
         {selectedMember ? (
-          <MemberProfile member={selectedMember} />
+          <MemberProfile member={selectedMember} hideTimestamps={true}/>
         ) : (
           <div className="h-full flex items-center justify-center text-gray-500 text-lg">
             Select a member to view details.
           </div>
         )}
       </div>
+    </div>
     </div>
   );
 }

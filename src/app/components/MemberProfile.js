@@ -1,6 +1,8 @@
 'use client';
+import AssignMemberButton from './AssignMemberButton'; // Adjust the path if needed
 
-export default function MemberProfile({ member ,hideTimestamps}) {
+
+export default function MemberProfile({ member ,hideTimestamps, projectId}) {
   if (!member) {
     return (
       <div className="h-full flex items-center justify-center text-gray-500 text-lg">
@@ -37,7 +39,16 @@ export default function MemberProfile({ member ,hideTimestamps}) {
           </>
         )}
       </div>
+     {projectId && (
+  <div className="mt-6">
+    <AssignMemberButton
+      projectId={projectId}
+      member={member}
+    />
+  </div>
+)}
     </div>
+   
   );
 }
 

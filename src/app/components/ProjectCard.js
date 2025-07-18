@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 import Board from './Board'; // Assuming you have a Board component for tasks
 
-export default function ProjectCard({ project, onViewMembers, onEdit }) {
+export default function ProjectCard({ project, onViewMembers, onEdit, onAssignMembers }) {
   
   const [isOpen, setIsOpen] = useState(false);
   const getStatusBadge = (status) => {
@@ -15,8 +15,7 @@ export default function ProjectCard({ project, onViewMembers, onEdit }) {
   console.log("ProjectCard received:", project); // 👈 check this
   
   const handleAssignMember = () => {
-    alert(`Assign members to: ${project.title}`);
-  };
+    if (onAssignMembers) onAssignMembers(project.project_id);  };
 
   const handleEditProject = () => {
   onEdit(project);

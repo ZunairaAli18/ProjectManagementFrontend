@@ -19,3 +19,53 @@ export async function fetchMembers() {
     return []; 
   }
 }
+
+export async function getUnassignedUsers(projectId) {
+  if (!projectId) {
+    console.warn('No projectId provided to getUnassignedUsers');
+    return [];
+  }
+
+  try {
+    const response = await fetch(`http://localhost:5000/${projectId}/unassigned-users`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.error || 'Failed to fetch unassigned users');
+    }
+
+    console.log('Unassigned users:', result);
+    return result|| [];
+
+  } catch (error) {
+    console.error('Fetch Unassigned Users Error:', error.message);
+    return [];
+  }
+}
+
+export async function assignMemberToProject(projectId, userId) {
+  if (!projectId || !userId) {
+    throw new Error('Project ID and User ID are required');
+  }
+
+  const response = await fetch(`http://localhost:5000/${projectId}/assignMember`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ user_id: userId }),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.message || 'Failed to assign member');
+  }
+
+  return await response.json();
+}

@@ -9,6 +9,7 @@ import AddUserModal from '../components/AddUserModal';
 import SingleProjectMembersPanel from '../components/SingleProjectMembersPanel'; // Import member panel
 import { getAllProjects, getProjectsCreatedByEmail ,getAllMyProjectsByEmail} from '@/lib/api/projects';
 import { useSearchParams } from 'next/navigation';
+import MembersPanel from '../components/MembersPanel';
 
 export default function DashBoard() {
   const SearchParams = useSearchParams();
@@ -18,6 +19,9 @@ export default function DashBoard() {
    const [selectedProjectId, setSelectedProjectId] = useState(null);
   const [showMembersModal, setShowMembersModal] = useState(false);
   const [projectToEdit, setProjectToEdit] = useState(null);
+  const [assignProjectId, setAssignProjectId] = useState(null);
+const [showAssignPanel, setShowAssignPanel] = useState(false);
+
 
  
  useEffect(() => {
@@ -88,6 +92,15 @@ const handleEditProject = (project) => {
   setProjectToEdit(project);
   setShowModal(true);
 };
+const handleAssignMembers = (projectId) => {
+  setAssignProjectId(projectId);
+  setShowAssignPanel(true);
+};
+const closeAssignPanel = () => {
+  setAssignProjectId(null);
+  setShowAssignPanel(false);
+};
+
 
 
   return (
@@ -102,7 +115,7 @@ const handleEditProject = (project) => {
           <Header onAddProjectClick={() => setShowModal(true)} onAddUserClick={()=>setShowUserModal(true)}/>
           <div className="h-[calc(100vh-120px)] overflow-y-auto pr-2">
             {projects.map((project, index) => (
-              <ProjectCard key={index} project={project} onViewMembers={handleViewMembers} onEdit={() => handleEditProject(project)}/>
+              <ProjectCard key={index} project={project} onViewMembers={handleViewMembers} onEdit={() => handleEditProject(project)} onAssignMembers={handleAssignMembers}/>
             ))}
           </div>
         </div>
@@ -125,7 +138,7 @@ const handleEditProject = (project) => {
       {/* Members Modal */}
       {showMembersModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-black/30">
-          <div className="bg-white rounded-lg shadow-xl w-11/12 max-w-5xl max-h-[90vh] overflow-y-auto p-6 relative">
+          {/* <div className="bg-white rounded-lg shadow-xl w-11/12 max-w-5xl max-h-[90vh] overflow-y-auto p-6 relative"> */}
             <button
               onClick={closeMembersModal}
               className="absolute top-4 right-4 text-gray-600 hover:text-red-500 text-xl font-bold"
@@ -133,9 +146,25 @@ const handleEditProject = (project) => {
               ×
             </button>
             <SingleProjectMembersPanel projectId={selectedProjectId} />
-          </div>
+          {/* </div> */}
         </div>
       )}
+      {showAssignPanel && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-black/30">
+  {/* <div className="bg-white rounded-lg shadow-xl w-11/12 max-w-5xl max-h-[90vh] overflow-y-auto p-6 relative"> */}
+    <button
+      onClick={closeAssignPanel}
+      className="absolute top-4 right-4 text-gray-600 hover:text-red-500 text-xl font-bold"
+    >
+      ×
+    </button>
+    
+    <MembersPanel projectId={assignProjectId} />
+  {/* </div> */}
+</div>
+
+)}
+
     </>
   );
 }
