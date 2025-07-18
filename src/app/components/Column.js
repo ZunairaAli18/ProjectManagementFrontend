@@ -1,20 +1,25 @@
 'use client';
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import Card from './Card';
 import AddUserStoryModal from './AddUserStoryModal';
-import UserStporyDetails from './UserStporyDetails'; 
+import UserStporyDetails from './UserStporyDetails';
 
-export default function Column({ title, tasks, onDragStart, onDrop, projectId, onSaveStory }) {
-  const router = useRouter();
+export default function Column({ title, tasks, onDragStart, onDrop, projectId, onSaveStory, onUpdateStory }) {
   const [showModal, setShowModal] = useState(false);
+  const [editStory, setEditStory] = useState(null);
+  const [showEditModal, setShowEditModal] = useState(false);
   const [selectedStory, setSelectedStory] = useState(null);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
 
   const handleViewDetails = (story) => {
-  setSelectedStory(story);
-  setShowDetailsModal(true);
-};
+    setSelectedStory(story);
+    setShowDetailsModal(true);
+  };
+
+  const handleEditStoryModal = (story) => {
+    setEditStory(story);
+    setShowEditModal(true);
+  };
 
   return (
     <>
@@ -36,12 +41,17 @@ export default function Column({ title, tasks, onDragStart, onDrop, projectId, o
         </div>
 
         {tasks.map((task, index) => (
-          <Card key={index} task={task} onDragStart={() => onDragStart(index)}
-          onViewDetails={handleViewDetails} />
+          <Card
+            key={index}
+            task={task}
+            onDragStart={() => onDragStart(index)}
+            onViewDetails={handleViewDetails}
+            onEditStoryModal={handleEditStoryModal}
+          />
         ))}
       </div>
 
-            {showModal && (
+      {showModal && (
         <AddUserStoryModal
           onClose={() => setShowModal(false)}
           onSave={onSaveStory}
@@ -49,19 +59,26 @@ export default function Column({ title, tasks, onDragStart, onDrop, projectId, o
         />
       )}
 
+      {showEditModal && editStory && (
+        <AddUserStoryModal
+          onClose={() => setShowEditModal(false)}
+          onUpdate={onUpdateStory}
+          projectId={projectId}
+          storyToEdit={editStory}
+        />
+      )}
+
       {showDetailsModal && selectedStory && (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm">
-        <div className="relative">
-          <UserStporyDetails story={selectedStory} onClose={() => setShowDetailsModal(false)} />
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm">
+          <UserStporyDetails story={selectedStory} />
           <button
             onClick={() => setShowDetailsModal(false)}
-            className="absolute top-4 right-4 text-gray-600 hover:text-black text-2xl font-bold"
+            className="absolute top-4 right-6 text-white text-2xl font-bold"
           >
             ×
           </button>
         </div>
-      </div>
-    )}
+      )}
     </>
   );
 }

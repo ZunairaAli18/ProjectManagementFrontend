@@ -1,26 +1,7 @@
 'use client';
-
 import { Users, UserPlus, Pencil, FileText } from 'lucide-react';
 
-export default function Card({ task, onDragStart, onViewDetails }) {
-  const handleViewMembers = () => {
-    router.push(`/user-story/${task.story_id}/members`);
-  };
-
-  const handleAssignMember = () => {
-    router.push(`/user-story/${task.story_id}/assign`);
-  };
-
-  const handleEditStory = () => {
-    router.push(`/user-story/${task.story_id}/edit`);
-  };
-
-  const handleViewDetails = () => {
-    if (typeof onViewDetails === 'function') {
-      onViewDetails(task); 
-    }
-  };
-
+export default function Card({ task, onDragStart, onViewDetails, onEditStoryModal }) {
   return (
     <div
       draggable
@@ -41,10 +22,18 @@ export default function Card({ task, onDragStart, onViewDetails }) {
         <button title="Assign Member" className="hover:scale-110 transition">
           <UserPlus className="w-4 h-4 text-green-600 hover:text-green-800" />
         </button>
-        <button title="Edit Story" className="hover:scale-110 transition">
+        <button
+          onClick={() => onEditStoryModal?.(task)}
+          title="Edit Story"
+          className="hover:scale-110 transition"
+        >
           <Pencil className="w-4 h-4 text-yellow-600 hover:text-yellow-800" />
         </button>
-        <button onClick={handleViewDetails} title="View Details" className="hover:scale-110 transition">
+        <button
+          onClick={() => onViewDetails?.(task)}
+          title="View Details"
+          className="hover:scale-110 transition"
+        >
           <FileText className="w-4 h-4 text-gray-600 hover:text-black" />
         </button>
       </div>
