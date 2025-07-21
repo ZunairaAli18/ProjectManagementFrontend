@@ -30,9 +30,9 @@ export default function Column({ title, tasks, onDragStart, onDrop, projectId, o
       >
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-xl font-bold text-black">{title}</h3>
-          {title === 'Backlog' && (
-            <button 
-              onClick={() => setShowModal(true)} 
+          {title === 'To Do' && (
+            <button
+              onClick={() => setShowModal(true)}
               className="bg-green-200 hover:bg-green-300 text-green-900 px-3 py-1 rounded text-sm font-semibold"
             >
               + Add Task
@@ -40,11 +40,11 @@ export default function Column({ title, tasks, onDragStart, onDrop, projectId, o
           )}
         </div>
 
-        {tasks.map((task, index) => (
+        {tasks.map((task) => (
           <Card
-            key={index}
+            key={task.story_id}
             task={task}
-            onDragStart={() => onDragStart(index)}
+            onDragStart={() => onDragStart(task.story_id)} // ✅ use story_id
             onViewDetails={handleViewDetails}
             onEditStoryModal={handleEditStoryModal}
           />
@@ -70,13 +70,7 @@ export default function Column({ title, tasks, onDragStart, onDrop, projectId, o
 
       {showDetailsModal && selectedStory && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm">
-          <UserStporyDetails story={selectedStory} onClose={()=>setShowDetailsModal(false)} />
-          {/* <button
-            onClick={() => setShowDetailsModal(false)}
-            className="absolute top-4 right-6 text-white text-2xl font-bold"
-          >
-            ×
-          </button> */}
+          <UserStporyDetails story={selectedStory} onClose={() => setShowDetailsModal(false)} />
         </div>
       )}
     </>

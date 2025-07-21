@@ -64,7 +64,7 @@ export default function SignUpPage(){
                 <form className="mt-15 bg-[#F6F6F6] p-8 rounded-xl shadow-xl w-[600px] h-[950px]" onSubmit={handleSubmit}>
                     <h2 className="text-7xl text-center font-extrabold mb-6  text-blue-800">Sign Up</h2>
                     <div className="mb-6"> 
-                        <label className="block mb-2 font-bold text-2xl">Name</label>
+                        <label className="block mb-2 font-bold text-2xl">Name <span className="text-red-600">*</span></label>
                         <input type="text"
             name="name"
             value={form.name}
@@ -75,7 +75,7 @@ export default function SignUpPage(){
                     </div>
 
                     <div className="mb-6">
-                        <label className="block mb-2 font-bold text-2xl">Email</label>
+                        <label className="block mb-2 font-bold text-2xl">Email <span className="text-red-600">*</span></label>
                         <input  type="email"
             name="email"
             value={form.email}
@@ -86,7 +86,7 @@ export default function SignUpPage(){
                         />
                     </div>
                   <div className="mb-6">
-  <label className="block mb-2 font-bold text-2xl">Age</label>
+  <label className="block mb-2 font-bold text-2xl">Age <span className="text-red-600">*</span></label>
   <input
     type="number"
     name="age"
@@ -98,7 +98,7 @@ export default function SignUpPage(){
   />
 </div>
 <div className="mb-6">
-  <label className="block mb-2 font-bold text-2xl">Gender</label>
+  <label className="block mb-2 font-bold text-2xl">Gender <span className="text-red-600">*</span></label>
   <select
     name="gender"
     value={form.gender}
@@ -114,7 +114,7 @@ export default function SignUpPage(){
 </div>
 
 <div className="mb-6">
-  <label className="block mb-2 font-bold text-2xl">Blood Group</label>
+  <label className="block mb-2 font-bold text-2xl">Blood Group <span className="text-red-600">*</span></label>
   <select
     name="bloodGroup"
     value={form.bloodGroup}
@@ -122,7 +122,7 @@ export default function SignUpPage(){
     className="w-full bg-blue-100 border border-gray-400 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
     required
   >
-    <option value="">Select blood group</option>
+    <option value="">Select blood group <span className="text-red-500">*</span></option>
     <option value="A+">A+</option>
     <option value="A-">A-</option>
     <option value="B+">B+</option>
@@ -137,7 +137,7 @@ export default function SignUpPage(){
                     
 
                     <div className="mb-6">
-                        <label className="block mb-2 font-bold text-2xl">Password</label>
+                        <label className="block mb-2 font-bold text-2xl">Password <span className="text-red-600">*</span></label>
                         <input
                         type="password"
                         name="password"

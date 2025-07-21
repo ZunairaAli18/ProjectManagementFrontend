@@ -87,7 +87,7 @@ export default function ProjectCard({ project, onViewMembers, onEdit, onAssignMe
 <div className="flex items-center gap-2 bg-blue-200 text-blue-800 px-6 py-4 rounded-xl shadow-lg">
   <h3 className="text-lg font-bold  text-blue-900">📋 User Stories and Tasks</h3>
 </div>
-          <Board />
+          <Board projectId={project.project_id}/>
         </div>
       )}
     </div>

@@ -60,7 +60,7 @@ export default function AddUserStoryModal({ onClose, onSave, onUpdate, projectId
       created_by: parseInt(createdById),
       status_id: 2,
     };
-
+    console.log(payload)
     try {
       if (storyToEdit && onUpdate) {
         await onUpdate(payload, storyToEdit.story_id);
