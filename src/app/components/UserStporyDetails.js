@@ -1,10 +1,10 @@
 'use client';
-import { X } from 'lucide-react'; 
+import { X, Paperclip, MessageSquareText } from 'lucide-react';
 
-export default function UserStoryDetails({ story, onClose }) {
+export default function UserStoryDetails({ story,comments,attachments, onClose }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm">
-      <div className="relative bg-[#FFF7E9] shadow-xl rounded-xl p-8 w-[600px]">
+      <div className="relative bg-[#FFF7E9] shadow-xl rounded-xl p-8 w-[600px] max-h-[90vh] overflow-y-auto">
         {/* Close button */}
         <button
           onClick={onClose}
@@ -20,20 +20,14 @@ export default function UserStoryDetails({ story, onClose }) {
 
         <hr className="mb-6" />
 
-        {/* Story Info */}
+        
+          {/* Story Info */}
         <div className="text-gray-800 space-y-3 px-4">
           <div className="flex justify-between">
             <span className="font-semibold">Story ID:</span>
             <span>{story.story_id}</span>
           </div>
-          <div className="flex justify-between">
-            <span className="font-semibold">Project:</span>
-            <span>{story.project_title}</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="font-semibold">Status:</span>
-            <span>{story.status_name}</span>
-          </div>
+          
           <div className="flex justify-between">
             <span className="font-semibold">Estimated Time:</span>
             <span>{story.estimated_time || '—'}</span>
@@ -52,13 +46,64 @@ export default function UserStoryDetails({ story, onClose }) {
           </div>
         </div>
 
-        {/* Description (if any) */}
+        {/* Description */}
         {story.description && (
           <>
             <hr className="my-6" />
             <div className="px-4">
               <h3 className="font-semibold mb-1 text-gray-900">Description:</h3>
               <p className="text-gray-700">{story.description}</p>
+            </div>
+          </>
+        )}
+
+        {/* Attachments */}
+        {attachments?.length > 0 && (
+          <>
+            <hr className="my-6" />
+            <div className="px-4">
+              <h3 className="flex items-center gap-2 font-semibold text-gray-900">
+                <Paperclip size={18} />
+                Attachments
+              </h3>
+              <ul className="list-disc list-inside text-blue-700 mt-2">
+                {attachments.map((file) => (
+                  <li key={file.attachment_id}>
+                    <a
+                      href={file.path}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:underline"
+                    >
+                      {file.file_name}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </>
+        )}
+
+        {/* Comments */}
+        {comments?.length > 0 && (
+          <>
+            <hr className="my-6" />
+            <div className="px-4">
+              <h3 className="flex items-center gap-2 font-semibold text-gray-900">
+                <MessageSquareText size={18} />
+                Comments
+              </h3>
+              <ul className="space-y-3 mt-2">
+                {comments.map((comment) => (
+                  <li key={comment.comment_id} className="text-gray-800 bg-white p-3 rounded-lg shadow-sm">
+                    <div className="text-sm text-gray-600 mb-1">
+                      <strong>{comment.commented_by}</strong> •{" "}
+                      {new Date(comment.comment_time).toLocaleString()}
+                    </div>
+                    <p className="text-gray-700">{comment.comment_text}</p>
+                  </li>
+                ))}
+              </ul>
             </div>
           </>
         )}

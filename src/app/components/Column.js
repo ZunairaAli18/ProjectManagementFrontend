@@ -3,6 +3,7 @@ import { useState } from 'react';
 import Card from './Card';
 import AddUserStoryModal from './AddUserStoryModal';
 import UserStporyDetails from './UserStporyDetails';
+import { fetchUserStoryDetails } from '@/lib/api/userstory'; // Adjust the import path as necessary
 
 export default function Column({ title, tasks, onDragStart, onDrop, projectId, onSaveStory, onUpdateStory }) {
   const [showModal, setShowModal] = useState(false);
@@ -11,10 +12,16 @@ export default function Column({ title, tasks, onDragStart, onDrop, projectId, o
   const [selectedStory, setSelectedStory] = useState(null);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
 
-  const handleViewDetails = (story) => {
-    setSelectedStory(story);
+  const handleViewDetails = async (story) => {
+  try {
+    const result = await fetchUserStoryDetails(story.story_id); // or story.id
+    const details = result;
+    setSelectedStory(details);  // this includes full data: story, comments, etc.
     setShowDetailsModal(true);
-  };
+  } catch (error) {
+    console.error("Failed to fetch story details:", error);
+  }
+};
 
   const handleEditStoryModal = (story) => {
     setEditStory(story);
@@ -70,7 +77,8 @@ export default function Column({ title, tasks, onDragStart, onDrop, projectId, o
 
       {showDetailsModal && selectedStory && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm">
-          <UserStporyDetails story={selectedStory} onClose={() => setShowDetailsModal(false)} />
+          <UserStporyDetails story={selectedStory.story} comments={selectedStory.comments}
+  attachments={selectedStory.attachments} onClose={() => setShowDetailsModal(false)} />
         </div>
       )}
     </>
