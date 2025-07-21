@@ -2,19 +2,27 @@
 import MemberProfile from "./MemberProfile";
 import { useState, useEffect } from "react";
 import { fetchMembers,getUnassignedUsers } from "../../lib/api/Members";
+import { assignedUsers, unassignedUsers } from "../../lib/api/userstory";
 
-export default function MembersPanel({ projectId }) {
+export default function MembersPanel({ projectId,userStoryId, isAssigning }) {
   const [members, setMembers] = useState([]);
   const [selectedMember, setSelectedMember] = useState(null);
 
   useEffect(() => {
     async function loadMembers() {
+      if (userStoryId) {
+        console.log("Loading members for user story:", userStoryId, isAssigning);
+        const data = isAssigning? await unassignedUsers(userStoryId): await assignedUsers(userStoryId);
+        setMembers(data.members);
+      }
+      else{
       const data = projectId ? await getUnassignedUsers(projectId) : await fetchMembers(); 
       console.log("Fetched Members:", data);
       setMembers(data.users); // Now data.users is an array of objects
     }
+  }
     loadMembers();
-  }, [projectId]);
+  }, [projectId, userStoryId]);
 
   return (
     <div className="fixed top-25 bottom-10 left-110 bg-white rounded-lg border shadow-lg z-50 overflow-hidden" style={{ width: '1200px', height: '80vh' }}>
@@ -54,6 +62,8 @@ export default function MembersPanel({ projectId }) {
     member={selectedMember}
     hideTimestamps={false}
     projectId={projectId}
+    userStoryId={userStoryId}
+    isAssigning={isAssigning}
   />
 )}
 

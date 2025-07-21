@@ -4,13 +4,18 @@ import Card from './Card';
 import AddUserStoryModal from './AddUserStoryModal';
 import UserStporyDetails from './UserStporyDetails';
 import { fetchUserStoryDetails } from '@/lib/api/userstory'; // Adjust the import path as necessary
+import MembersPanel from './MembersPanel'; // Adjust the import path as necessary
 
 export default function Column({ title, tasks, onDragStart, onDrop, projectId, onSaveStory, onUpdateStory }) {
   const [showModal, setShowModal] = useState(false);
+  const[isAssigning, setIsAssigning] = useState(false);
   const [editStory, setEditStory] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedStory, setSelectedStory] = useState(null);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [showMembersPanel, setShowMembersPanel] = useState(false);
+// either task or project
+
 
   const handleViewDetails = async (story) => {
   try {
@@ -27,6 +32,19 @@ export default function Column({ title, tasks, onDragStart, onDrop, projectId, o
     setEditStory(story);
     setShowEditModal(true);
   };
+  const handleViewMembers = (story) => {
+  // for user story
+  setIsAssigning(false);
+  setSelectedStory(story)
+  setShowMembersPanel(true);
+};
+
+const handleAssignMember = (story) => {
+  setIsAssigning(true);
+  setSelectedStory(story)
+  setShowMembersPanel(true);
+};
+
 
   return (
     <>
@@ -54,6 +72,8 @@ export default function Column({ title, tasks, onDragStart, onDrop, projectId, o
             onDragStart={() => onDragStart(task.story_id)} // ✅ use story_id
             onViewDetails={handleViewDetails}
             onEditStoryModal={handleEditStoryModal}
+             onViewMembers={handleViewMembers}
+  onAssignMember={handleAssignMember}
           />
         ))}
       </div>
@@ -81,6 +101,22 @@ export default function Column({ title, tasks, onDragStart, onDrop, projectId, o
   attachments={selectedStory.attachments} onClose={() => setShowDetailsModal(false)} />
         </div>
       )}
+      {showMembersPanel  && (
+  <div className="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm flex items-center justify-center">
+    <button
+      onClick={() => setShowMembersPanel(false)}
+      className="absolute top-4 right-4 text-gray-600 hover:text-red-500 text-xl font-bold"
+    >
+      ×
+    </button>
+    <MembersPanel
+      
+      userStoryId={selectedStory?.story_id} // Pass the story_id if available
+      isAssigning={isAssigning}
+    />
+  </div>
+)}
+
     </>
   );
 }

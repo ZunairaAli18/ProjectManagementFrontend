@@ -2,7 +2,7 @@
 import AssignMemberButton from './AssignMemberButton'; // Adjust the path if needed
 
 
-export default function MemberProfile({ member ,hideTimestamps, projectId}) {
+export default function MemberProfile({ member ,hideTimestamps, projectId,userStoryId, isAssigning}) {
   if (!member) {
     return (
       <div className="h-full flex items-center justify-center text-gray-500 text-lg">
@@ -40,11 +40,12 @@ export default function MemberProfile({ member ,hideTimestamps, projectId}) {
           </>
         )}
       </div>
-     {projectId && (
+     {(projectId || (userStoryId && isAssigning))&& (
   <div className="mt-6">
     <AssignMemberButton
       projectId={projectId}
       member={member}
+      userStoryId={userStoryId}
     />
   </div>
 )}

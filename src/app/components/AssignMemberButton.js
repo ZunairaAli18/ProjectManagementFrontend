@@ -1,27 +1,36 @@
 'use client';
 
 import { useState } from 'react';
-import { assignMemberToProject } from '@/lib/api/Members';
+import { assignMemberToProject, assignMemberToUserStory } from '@/lib/api/Members';
 
-export default function AssignMemberButton({ projectId, member }) {
+export default function AssignMemberButton({ projectId, userStoryId, member }) {
   const [isAssigning, setIsAssigning] = useState(false);
-  const [isAssigned, setIsAssigned] = useState(false); // new state
+  const [isAssigned, setIsAssigned] = useState(false);
 
   const handleAssign = async () => {
-  if (!projectId || !member?.user_id || isAssigned) return;
+    if (!member?.user_id || isAssigned) return;
 
-  setIsAssigning(true);
-  try {
-    await assignMemberToProject(projectId, member.user_id);
-    console.log('Member has been assigned');
-    setIsAssigned(true); // mark as assigned
-   
-  } catch (error) {
-    console.error('Error assigning member:', error.message);
-  } finally {
-    setIsAssigning(false);
-  }
-};
+    setIsAssigning(true);
+
+    try {
+      if (projectId) {
+        await assignMemberToProject(projectId, member.user_id);
+        console.log('Member assigned to project');
+      } else if (userStoryId) {
+        await assignMemberToUserStory(userStoryId, member.user_id);
+        console.log('Member assigned to user story');
+      } else {
+        console.warn('No valid target for assignment');
+        return;
+      }
+
+      setIsAssigned(true);
+    } catch (error) {
+      console.error('Error assigning member:', error.message);
+    } finally {
+      setIsAssigning(false);
+    }
+  };
 
   return (
     <button
@@ -31,7 +40,13 @@ export default function AssignMemberButton({ projectId, member }) {
         isAssigned ? 'bg-green-600' : 'bg-blue-600 hover:bg-blue-700'
       }`}
     >
-      {isAssigned ? 'Assigned' : isAssigning ? 'Assigning...' : 'Assign to Project'}
+      {isAssigned
+        ? 'Assigned'
+        : isAssigning
+        ? 'Assigning...'
+        : projectId
+        ? 'Assign to Project'
+        : 'Assign to User Story'}
     </button>
   );
 }

@@ -69,3 +69,25 @@ export async function assignMemberToProject(projectId, userId) {
 
   return await response.json();
 }
+export async function assignMemberToUserStory(storyId, userId) {
+  try {
+    const response = await fetch(`http://localhost:5000/user-stories/${storyId}/assign`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ user_id: userId }),
+    });
+
+    const result = await response.json();
+
+    if (!response.ok || result?.Success === false) {
+      throw new Error(result?.error || 'Failed to assign member to user story');
+    }
+
+    return result.message;
+  } catch (error) {
+    console.error('Error in assignMemberToUserStory:', error.message);
+    throw error;
+  }
+}
