@@ -1,11 +1,13 @@
 'use client';
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import Navbar from "../components/NavBar";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createUser } from "@/lib/api/api";
 
 export default function SignUpPage(){
+  const [departments, setDepartments] = useState([]);
+
     const router=useRouter();
     const [form, setForm]=useState({
         name: '',
@@ -16,7 +18,26 @@ export default function SignUpPage(){
         age: '',
     gender: '',
     bloodGroup: '',
-    });
+    department_name:'',
+      });
+    useEffect(() => {
+  const fetchDepartments = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/departments');
+      const data = await response.json();
+      if (data.Success) {
+        setDepartments(data.departments);
+      } else {
+        console.error('Failed to fetch departments:', data.error);
+      }
+    } catch (error) {
+      console.error('Error fetching departments:', error);
+    }
+  };
+
+  fetchDepartments();
+}, []);
+
     const handleChange = (e) => {
     const { name, value } = e.target;
     setForm(prev => ({ ...prev, [name]: value }));
@@ -133,6 +154,26 @@ export default function SignUpPage(){
     <option value="AB-">AB-</option>
   </select>
 </div>
+<div className="mb-6">
+  <label className="block mb-2 font-bold text-2xl">
+    Department <span className="text-red-600">*</span>
+  </label>
+  <select
+    name="department_name"
+    value={form.department_name}
+    onChange={handleChange}
+    required
+    className="w-full bg-blue-100 border border-gray-400 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+  >
+    <option value="">Select a department</option>
+    {departments.map((dept) => (
+      <option key={dept.department_id} value={dept.name}>
+        {dept.name}
+      </option>
+    ))}
+  </select>
+</div>
+
 
                     
 

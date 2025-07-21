@@ -11,7 +11,8 @@ export async function createUser(form){
         password: form.password,
         age: form.age,
         gender: form.gender,
-        bloodGroup: form.bloodGroup
+        bloodGroup: form.bloodGroup,
+        department: form.department_name,
       }),
     });
 
