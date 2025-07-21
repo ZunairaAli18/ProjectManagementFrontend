@@ -32,6 +32,7 @@ export default function MemberProfile({ member ,hideTimestamps, projectId}) {
         <Detail label="Age" value={member.age} />
         <Detail label="Gender" value={member.gender} />
         <Detail label="Blood Group" value={member.blood_group} />
+        <Detail label="Department" value={member.department_name} />
         {hideTimestamps===false && (
           <>
             <Detail label="Joined" value={formatDate(member.joined_at)} />
