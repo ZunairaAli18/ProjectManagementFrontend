@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 import Board from './Board'; // Assuming you have a Board component for tasks
 
-export default function ProjectCard({ project, onViewMembers, onEdit, onAssignMembers }) {
+export default function ProjectCard({ project, onViewMembers, onEdit, onAssignMembers, onAttachmentFetch}) {
   
   const [isOpen, setIsOpen] = useState(false);
   const getStatusBadge = (status) => {
@@ -23,7 +23,7 @@ export default function ProjectCard({ project, onViewMembers, onEdit, onAssignMe
 
 
   const handleAttachmentFetch = () => {
-    alert(`View attachments for: ${project.title}`);
+    if (onAttachmentFetch) onAttachmentFetch(project);
   };
   const handleViewMembers = () => {
     console.log("ProjectCard received:", project); // 👈 check this

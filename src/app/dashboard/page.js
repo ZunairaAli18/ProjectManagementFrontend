@@ -10,6 +10,9 @@ import SingleProjectMembersPanel from '../components/SingleProjectMembersPanel';
 import { getAllProjects, getProjectsCreatedByEmail ,getAllMyProjectsByEmail} from '@/lib/api/projects';
 import { useSearchParams } from 'next/navigation';
 import MembersPanel from '../components/MembersPanel';
+import ProjectAttachmentsModal from '../components/ProjectAttachments';
+import { fetchProjectAttachments } from '@/lib/api/fetchProjectAttachments';
+
 
 export default function DashBoard() {
   const SearchParams = useSearchParams();
@@ -21,6 +24,10 @@ export default function DashBoard() {
   const [projectToEdit, setProjectToEdit] = useState(null);
   const [assignProjectId, setAssignProjectId] = useState(null);
 const [showAssignPanel, setShowAssignPanel] = useState(false);
+const [attachments, setAttachments] = useState([]);
+const [showAttachmentsModal, setShowAttachmentsModal] = useState(false);
+const [selectedProjectTitle, setSelectedProjectTitle] = useState('');
+
 
 
  
@@ -96,6 +103,17 @@ const handleAssignMembers = (projectId) => {
   setAssignProjectId(projectId);
   setShowAssignPanel(true);
 };
+const handleAttachmentFetch = async (project) => {
+  try {
+    const files = await fetchProjectAttachments(project.project_id);
+    setAttachments(files);
+    setSelectedProjectTitle(project.title);
+    setShowAttachmentsModal(true);
+  } catch (err) {
+    console.error("Error loading attachments:", err.message);
+    alert("Failed to load attachments");
+  }
+};
 const closeAssignPanel = () => {
   setAssignProjectId(null);
   setShowAssignPanel(false);
@@ -115,7 +133,7 @@ const closeAssignPanel = () => {
           <Header onAddProjectClick={() => setShowModal(true)} onAddUserClick={()=>setShowUserModal(true)}/>
           <div className="h-[calc(100vh-120px)] overflow-y-auto pr-2">
             {projects.map((project, index) => (
-              <ProjectCard key={index} project={project} onViewMembers={handleViewMembers} onEdit={() => handleEditProject(project)} onAssignMembers={handleAssignMembers}/>
+              <ProjectCard key={index} project={project} onViewMembers={handleViewMembers} onEdit={() => handleEditProject(project)} onAssignMembers={handleAssignMembers} onAttachmentFetch={handleAttachmentFetch} />
             ))}
           </div>
         </div>
@@ -162,9 +180,16 @@ const closeAssignPanel = () => {
     <MembersPanel projectId={assignProjectId} />
   {/* </div> */}
 </div>
-
 )}
-
+{showAttachmentsModal && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-black/30">
+    <ProjectAttachmentsModal
+      projectTitle={selectedProjectTitle}
+      attachments={attachments}
+      onClose={() => setShowAttachmentsModal(false)}
+    />
+  </div>
+)}
     </>
   );
 }
