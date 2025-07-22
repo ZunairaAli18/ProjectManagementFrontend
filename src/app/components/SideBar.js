@@ -1,7 +1,15 @@
 'use client';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 export default function SideBar() {
+  const router = useRouter();
+
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    router.push('/login');
+  };
+
   return (
     <div className="w-72 bg-black h-screen shadow-md flex flex-col justify-between">
       {/* Top Section with Logo */}
@@ -36,9 +44,12 @@ export default function SideBar() {
 
       {/* Bottom Logout */}
       <div className="px-6 py-4 border-t border-gray-300">
-        <Link href="/" className="block text-lg text-red-400 hover:text-red-300 font-medium">
+        <button
+          onClick={handleLogout}
+          className="block text-lg text-red-400 hover:text-red-300 font-medium w-full text-left"
+        >
           Logout
-        </Link>
+        </button>
       </div>
     </div>
   );
