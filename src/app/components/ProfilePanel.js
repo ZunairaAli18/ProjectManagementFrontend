@@ -2,16 +2,17 @@
 import { useEffect, useState } from 'react';
 import MemberProfile from './MemberProfile';
 import { fetchUserProfile } from '@/lib/api/api';
+import { useSelector } from 'react-redux';
+
 
 export default function ProfilePanel() {
    const [user, setUser] = useState(null);
-
+  const loggedInUser = useSelector((state) => state.auth.user);
   useEffect(() => {
-    const stored = localStorage.getItem('user');
-    if (stored) {
+    
+    if (loggedInUser) {
       try {
-        const parsedUser = JSON.parse(stored);
-        const userId = parsedUser?.[0]; // assuming [id, name, email...]
+        const userId = loggedInUser.user_id; // assuming [id, name, email...]
 
         if (userId) {
           fetchUserProfile(userId)

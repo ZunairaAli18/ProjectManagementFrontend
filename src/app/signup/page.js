@@ -67,7 +67,7 @@ export default function SignUpPage(){
         try{
           const result=await createUser(form);
           alert(result.message);
-          router.push('/dashboard');
+          router.push('/login');
         }catch(error){
           console.error('Error:', error.message);
           alert(error.message);

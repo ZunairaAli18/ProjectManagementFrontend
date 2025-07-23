@@ -54,7 +54,7 @@ export async function loginUser(credentials) {
   
 ];
     console.log(userArray)
-    localStorage.setItem('user', JSON.stringify(userArray));    return result;
+   return result;
   } catch (error) {
     throw error;
   }

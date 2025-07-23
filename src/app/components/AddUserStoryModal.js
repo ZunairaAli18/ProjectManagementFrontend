@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 
 export default function AddUserStoryModal({ onClose, onSave, onUpdate, projectId, storyToEdit }) {
   const [form, setForm] = useState({
@@ -10,11 +11,11 @@ export default function AddUserStoryModal({ onClose, onSave, onUpdate, projectId
     createdById: '',
     status_id: 2,
   });
-
+  const user = useSelector((state) => state.user);
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem('user'));
+   
     if (!user) {
-      alert("User not found in localStorage.");
+      alert("User not found in redux");
       return;
     }
 
@@ -23,15 +24,15 @@ export default function AddUserStoryModal({ onClose, onSave, onUpdate, projectId
         title: storyToEdit.title || '',
         description: storyToEdit.description || '',
         estimated_time: storyToEdit.estimated_time || '',
-        createdBy: user[1],
-        createdById: user[0],
+        createdBy: user.name,
+        createdById: user.user_id,
         status_id: storyToEdit.status_id || 2,
       });
     } else {
       setForm(prev => ({
         ...prev,
-        createdBy: user[1],
-        createdById: user[0],
+        createdBy: user.name,
+        createdById: user.user_id,
       }));
     }
   }, [storyToEdit]);

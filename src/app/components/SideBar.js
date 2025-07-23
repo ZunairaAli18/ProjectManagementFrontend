@@ -1,12 +1,15 @@
 'use client';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useDispatch } from 'react-redux';
+import { logout } from '@/store/slices/authSlice';
 
 export default function SideBar() {
   const router = useRouter();
+  const dispatch = useDispatch();
 
   const handleLogout = () => {
-    localStorage.removeItem('user');
+    dispatch(logout()); 
     router.push('/login');
   };
 

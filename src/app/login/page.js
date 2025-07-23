@@ -3,9 +3,12 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import NavBar from '../components/NavBar';
 import { loginUser } from '@/lib/api/api';
+import { useDispatch } from 'react-redux';
+import { login } from '@/store/slices/authSlice';
 
 export default function LoginPage() {
   const router = useRouter();
+  const dispatch = useDispatch();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -20,6 +23,8 @@ export default function LoginPage() {
 
     try {
       const result = await loginUser({ email, password });
+      dispatch(login(result.user));
+      console.log('Dispatched login to Redux');
       alert(result.message);
       router.push('/dashboard');
     } catch (error) {

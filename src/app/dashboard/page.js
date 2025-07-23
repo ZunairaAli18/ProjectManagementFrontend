@@ -13,6 +13,8 @@ import { getAllProjects, getProjectsCreatedByEmail ,getAllMyProjectsByEmail } fr
 import { fetchProjectAttachments } from '@/lib/api/fetchProjectAttachments';
 import { useSearchParams } from 'next/navigation';
 import Guard from '../components/Guard'; // ✅ Import your guard
+import DebugAuth from '../debug-auth';
+import { useSelector } from 'react-redux';
 
 export default function Page() {
   return (
@@ -35,12 +37,12 @@ function DashboardContent() {
   const [attachments, setAttachments] = useState([]);
   const [showAttachmentsModal, setShowAttachmentsModal] = useState(false);
   const [selectedProjectTitle, setSelectedProjectTitle] = useState('');
-
+  const user = useSelector((state) => state.auth.user);
   useEffect(() => {
     const fetchProjects = async () => {
       const view = SearchParams.get('view');
-      const user = JSON.parse(localStorage.getItem('user'));
-      const email = user?.[2];
+      
+      const email = user.email;
       const statusMap = {
         1: "Paused",
         2: "Yet to Start",
@@ -141,6 +143,7 @@ function DashboardContent() {
           </div>
         </div>
       </div>
+    
 
       {showModal && (
         <AddProjectModal

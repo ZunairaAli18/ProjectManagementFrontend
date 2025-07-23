@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from "react";
 import { addProject, updateProject } from "@/lib/api/projects";
+import { useSelector } from 'react-redux';
 
 export default function AddProjectModal({ onClose, onSave, projectToEdit }) {
   const [form, setForm] = useState({
@@ -11,10 +12,10 @@ export default function AddProjectModal({ onClose, onSave, projectToEdit }) {
     createdAt: '',
     status_id: 2,
   });
+  const user = useSelector((state) => state.auth.user);
   const [edit,setEdit]=useState(false)
   useEffect(() => {
     const now = new Date().toISOString().slice(0, 16); // e.g., 2025-07-15T12:34
-    const user = JSON.parse(localStorage.getItem('user'));
     
     if (!user) {
       alert("User not found in localStorage.");
@@ -45,8 +46,8 @@ export default function AddProjectModal({ onClose, onSave, projectToEdit }) {
       setForm(prev => ({
         ...prev,
         createdAt: now,
-        createdBy: user[1],
-        createdById: user[0],
+        createdBy: user.name,
+        createdById: user.user_id,
         status_id: 2,
       }));
     }
