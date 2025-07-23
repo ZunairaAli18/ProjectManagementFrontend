@@ -3,68 +3,73 @@ import { useState, useEffect } from "react";
 import { addProject, updateProject } from "@/lib/api/projects";
 
 export default function AddProjectModal({ onClose, onSave, projectToEdit }) {
-  const [form, setForm] = useState({
-    name: '',
-    deadline: '',
-    createdBy: '',
-    createdById: '',
-    createdAt: '',
-    status_id: 2,
-  });
-  const [edit,setEdit]=useState(false)
+  const [form, setForm] = useState(null); // initially null to detect "not yet initialized"
+  const [edit, setEdit] = useState(false);
+
+  // Load form only once when modal opens
   useEffect(() => {
-    const now = new Date().toISOString().slice(0, 16); // e.g., 2025-07-15T12:34
+    const now = new Date().toISOString().slice(0, 16);
     const user = JSON.parse(localStorage.getItem('user'));
-    
+    const draft = JSON.parse(localStorage.getItem("project-draft"));
+
     if (!user) {
       alert("User not found in localStorage.");
       return;
     }
 
     if (projectToEdit) {
-      setEdit(true)
-      console.log("edit",projectToEdit)
+      setEdit(true);
       const parsedCreatedAt = new Date(projectToEdit.created_at).toISOString().slice(0, 16);
       const parsedDeadline = new Date(projectToEdit.deadline).toISOString().slice(0, 10);
-      
+
       const statusMap = {
-  "Paused": 1,
-  "Yet to Start": 2,
-  "In Progress": 3,
-  "Completed": 4
-};
+        "Paused": 1,
+        "Yet to Start": 2,
+        "In Progress": 3,
+        "Completed": 4
+      };
+
       setForm({
         name: projectToEdit.title || '',
         deadline: parsedDeadline,
         createdBy: projectToEdit.created_by,
-        createdById:  parseInt(projectToEdit.created_by_id),
+        createdById: parseInt(projectToEdit.created_by_id),
         createdAt: parsedCreatedAt,
         status_id: statusMap[projectToEdit.status] || 2,
       });
     } else {
-      setForm(prev => ({
-        ...prev,
-        createdAt: now,
+      setForm({
+        name: draft?.name || '',
+        deadline: draft?.deadline || '',
         createdBy: user[1],
         createdById: user[0],
+        createdAt: now,
         status_id: 2,
-      }));
+      });
     }
   }, [projectToEdit]);
-  
+
+  // Auto-save draft only if not in edit mode and form has been initialized
+  useEffect(() => {
+    if (!edit && form !== null) {
+      localStorage.setItem("project-draft", JSON.stringify({
+        name: form.name,
+        deadline: form.deadline,
+      }));
+    }
+  }, [form?.name, form?.deadline]);
+
   const handleChange = (e) => {
-    setForm(prev => ({
-      ...prev,
-      [e.target.name]: e.target.value
-    }));
+    const { name, value } = e.target;
+    setForm(prev => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("form",form)
+
     const { name, deadline, createdById, status_id } = form;
 
-    if (!name || !deadline ) {
+    if (!name || !deadline) {
       alert("Enter all required details");
       return;
     }
@@ -76,24 +81,26 @@ export default function AddProjectModal({ onClose, onSave, projectToEdit }) {
       status_id: status_id
     };
 
-    console.log("Submitting payload:", payload);
-    
     try {
-    if (edit && projectToEdit?.project_id) {
-      // Editing existing project
-      await updateProject({ title: name, deadline: deadline }, projectToEdit.project_id);
-      console.log("Project updated successfully");
-    } else {
-      // Adding new project
-      await addProject(payload);
-      console.log("Project created successfully");
-    }
+      if (edit && projectToEdit?.project_id) {
+        await updateProject({ title: name, deadline: deadline }, projectToEdit.project_id);
+      } else {
+        await addProject(payload);
+        localStorage.removeItem("project-draft"); // Clear only after successful save
+      }
+
       onSave();
       onClose();
     } catch (err) {
       alert("Failed to save project: " + err.message);
     }
   };
+
+  const handleCancel = () => {
+    onClose(); // Do not clear the draft on cancel
+  };
+
+  if (!form) return null; // avoid rendering before state is set
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm">
@@ -137,7 +144,7 @@ export default function AddProjectModal({ onClose, onSave, projectToEdit }) {
         />
 
         <div className="flex justify-end gap-2">
-          <button onClick={onClose} className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Cancel</button>
+          <button onClick={handleCancel} className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Cancel</button>
           <button onClick={handleSubmit} className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Save</button>
         </div>
       </div>
