@@ -85,3 +85,19 @@ export async function fetchUserProfile(userId) {
     throw err;
   }
 }
+export async function updateUserProfile(updatedUser) {
+  console.log('Updating user profile:', updatedUser);
+  const res = await fetch(`http://localhost:5000/update-profile`, {
+    method: 'PUT', // or PATCH
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(updatedUser),
+  });
+
+  if (!res.ok) {
+    throw new Error('Failed to update profile');
+  }
+
+  return res.json();
+}

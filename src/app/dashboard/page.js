@@ -15,6 +15,7 @@ import { useSearchParams } from 'next/navigation';
 import Guard from '../components/Guard'; // ✅ Import your guard
 import DebugAuth from '../debug-auth';
 import { useSelector } from 'react-redux';
+import { Upload } from 'lucide-react';
 
 export default function Page() {
   return (
@@ -127,6 +128,7 @@ function DashboardContent() {
     <>
       <div className="flex relative">
         <SideBar />
+      
         <div className={`flex-1 p-6 bg-[#FFE6E1] min-h-screen transition duration-300 ${showModal ? 'blur-sm' : ''}`}>
           <Header onAddProjectClick={() => setShowModal(true)} onAddUserClick={() => setShowUserModal(true)} />
           <div className="h-[calc(100vh-120px)] overflow-y-auto pr-2">
