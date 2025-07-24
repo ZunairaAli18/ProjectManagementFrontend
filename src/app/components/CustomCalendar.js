@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 import { Calendar, dateFnsLocalizer, Views } from 'react-big-calendar';
 import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop';
 import { DndProvider } from 'react-dnd';
@@ -8,6 +8,7 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import { format, parse, startOfWeek, getDay } from 'date-fns';
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
+import { useSelector } from 'react-redux';
 
 const locales = {
   'en-US': require('date-fns/locale/en-US'),
@@ -24,14 +25,56 @@ const localizer = dateFnsLocalizer({
 const DnDCalendar = withDragAndDrop(Calendar);
 
 export default function CustomCalendar() {
-  const [events, setEvents] = useState([
-    {
-      id: 1,
-      title: 'Meeting',
-      start: new Date(),
-      end: new Date(),
-    },
-  ]);
+  const userId = useSelector((state) => state.auth.user?.user_id); // Adjust based on your Redux shape
+  const [events, setEvents] = useState([]);
+
+  useEffect(() => {
+  if (!userId) return;
+
+  const fetchAll = async () => {
+    try {
+      // Fetch projects
+      const projectsRes = await fetch(`http://localhost:5000/assigned-projects/${userId}`);
+      const projectsData = await projectsRes.json();
+
+      // Fetch events
+      console.log(userId)
+      const eventsRes = await fetch(`http://localhost:5000/events/${userId}`);
+      const eventsData = await eventsRes.json();
+
+      const combined = [];
+
+      if (projectsData.Success && Array.isArray(projectsData.projects)) {
+        const mappedProjects = projectsData.projects.map((item) => ({
+          
+          title: item.title,
+          start: new Date(item.deadline),
+          end: new Date(item.deadline),
+          type: 'project'
+        }));
+        combined.push(...mappedProjects);
+      }
+
+      if (eventsData.Success && Array.isArray(eventsData.events)) {
+        const mappedEvents = eventsData.events.map((item) => ({
+          id: `event-${item.event_id || item.id}`,
+          title: item.title,
+          start: new Date(item.deadline),
+          end: new Date(item.deadline),
+          type: 'event'
+        }));
+        combined.push(...mappedEvents);
+      }
+      console.log(combined)
+      setEvents(combined);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
+  fetchAll();
+}, [userId]);
+
   const [currentDate, setCurrentDate] = useState(new Date());
   const [currentView, setCurrentView] = useState(Views.MONTH);
 
@@ -42,17 +85,62 @@ export default function CustomCalendar() {
     }
   };
 
-  const handleSelectEvent = (event) => {
-    if (confirm(`Delete "${event.title}"?`)) {
-      setEvents(events.filter((e) => e.id !== event.id));
-    }
-  };
+  const handleSelectEvent = async (event) => {
+  const confirmDelete = confirm(`Are you sure you want to delete "${event.title}"?`);
+  if (!confirmDelete) return;
 
-  const moveEvent = ({ event, start, end }) => {
-    setEvents((prev) =>
-      prev.map((e) => (e.id === event.id ? { ...e, start, end } : e))
-    );
-  };
+  try {
+    const res = await fetch(`http://localhost:5000/delete-event/${event.id}`, {
+      method: 'DELETE',
+    });
+
+    const data = await res.json();
+
+    if (res.ok && data.Success) {
+      // Remove from local state
+      setEvents((prev) => prev.filter((e) => e.id !== event.id));
+      alert('Event deleted successfully');
+    } else {
+      console.error(data.error || 'Failed to delete event');
+      alert('Error deleting event');
+    }
+  } catch (err) {
+    console.error('Network error:', err);
+    alert('Server error while deleting event');
+  }
+};
+
+
+  const moveEvent = async ({ event, start, end }) => {
+  try {
+    const response = await fetch('http://localhost:5000/update-event-deadline', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        event_id: event.id,
+        new_deadline: start.toISOString().split('T')[0], // YYYY-MM-DD
+      }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok && data.Success) {
+      // Only update in frontend if backend update succeeded
+      setEvents((prev) =>
+        prev.map((e) => (e.id === event.id ? { ...e, start, end } : e))
+      );
+    } else {
+      console.error(data.error || 'Failed to update event');
+      alert('Backend failed to update deadline');
+    }
+  } catch (err) {
+    console.error('Network error:', err);
+    alert('Server error while updating deadline');
+  }
+};
+
 
 //   const resizeEvent = ({ event, start, end }) => {
 //     setEvents((prev) =>
