@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-
+import { Paperclip } from 'lucide-react';
 export default function AddUserStoryModal({ onClose, onSave, onUpdate, projectId, storyToEdit }) {
   const [form, setForm] = useState(null); // null initially
   const [edit, setEdit] = useState(false);
@@ -130,8 +130,10 @@ export default function AddUserStoryModal({ onClose, onSave, onUpdate, projectId
           onChange={handleChange}
           className="w-full h-[50px] bg-blue-100 border px-3 py-2 mb-8 rounded-lg shadow-lg"
         />
-
-        <div className="flex justify-end gap-2">
+        <div className='justify-between items-center mt-4'><div className="flex items-center gap-2 absolute text-gray-500 hover:text-black cursor-pointer ml-2">
+  <Paperclip size={25} /> <span className="text-sm">Attach File</span>
+</div>
+ <div className="flex justify-end gap-2">
           <button onClick={onClose} className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Cancel</button>
           {!edit && (
             <button onClick={handleClearDraft} type="button" className="px-4 py-2 bg-yellow-400 text-black rounded hover:bg-yellow-500">
@@ -142,6 +144,9 @@ export default function AddUserStoryModal({ onClose, onSave, onUpdate, projectId
             {storyToEdit ? "Update" : "Save"}
           </button>
         </div>
+</div>
+
+       
       </div>
     </div>
   );
