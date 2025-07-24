@@ -29,7 +29,7 @@ export default function CustomCalendar() {
       id: 1,
       title: 'Meeting',
       start: new Date(),
-      end: new Date(new Date().getTime() + 60 * 60 * 1000),
+      end: new Date(),
     },
   ]);
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -54,11 +54,11 @@ export default function CustomCalendar() {
     );
   };
 
-  const resizeEvent = ({ event, start, end }) => {
-    setEvents((prev) =>
-      prev.map((e) => (e.id === event.id ? { ...e, start, end } : e))
-    );
-  };
+//   const resizeEvent = ({ event, start, end }) => {
+//     setEvents((prev) =>
+//       prev.map((e) => (e.id === event.id ? { ...e, start, end } : e))
+//     );
+//   };
 
   const CustomToolbar = ({ label, onNavigate, onView }) => (
     <div className="flex justify-between items-center mb-4 bg-orange-100 px-4 py-2 rounded-md ">
@@ -104,8 +104,7 @@ return (
           onSelectSlot={handleSelectSlot}
           onSelectEvent={handleSelectEvent}
           onEventDrop={moveEvent}
-          onEventResize={resizeEvent}
-          resizable
+          
           selectable
           defaultView={Views.MONTH}
           components={{
