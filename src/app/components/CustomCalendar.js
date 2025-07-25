@@ -55,16 +55,17 @@ export default function CustomCalendar() {
         combined.push(...mappedProjects);
       }
 
-      if (eventsData.Success && Array.isArray(eventsData.events)) {
-        const mappedEvents = eventsData.events.map((item) => ({
-          id: item.event_id, 
-          title: item.title,
-          start: new Date(item.deadline),
-          end: new Date(item.deadline),
-          type: 'event'
-        }));
-        combined.push(...mappedEvents);
-      }
+     if (Array.isArray(eventsData)) {
+  const mappedEvents = eventsData.map((item) => ({
+    id: item.event_id,
+    title: item.title,
+    start: new Date(item.deadline),
+    end: new Date(item.deadline),
+    type: 'event'
+  }));
+  combined.push(...mappedEvents);
+}
+
       console.log(combined)
       setEvents(combined);
     } catch (error) {
