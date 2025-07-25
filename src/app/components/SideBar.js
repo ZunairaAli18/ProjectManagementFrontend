@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useDispatch } from 'react-redux';
 import { logout } from '@/store/slices/authSlice';
+import { Calendar } from 'lucide-react'; // Import icon
 
 export default function SideBar() {
   const router = useRouter();
@@ -13,13 +14,22 @@ export default function SideBar() {
     router.push('/login');
   };
 
+  const handleCalendarClick = () => {
+    router.push('/calendar'); // Navigate to calendar page
+  };
+
   return (
     <div className="w-72 bg-black h-screen shadow-md flex flex-col justify-between">
       {/* Top Section with Logo */}
       <div>
-        <div className="flex items-center justify-start px-6 py-5 border-b border-gray-300">
-          <div className="w-10 h-10 bg-blue-500 rounded-full mr-3"></div> {/* Logo placeholder */}
-          <h1 className="text-xl font-bold text-gray-100">Projectify</h1>
+        <div className="flex items-center justify-between px-6 py-5 border-b border-gray-300">
+          <div className="flex items-center">
+            <div className="w-10 h-10 bg-blue-500 rounded-full mr-3"></div> {/* Logo placeholder */}
+            <h1 className="text-xl font-bold text-gray-100">Projectify</h1>
+          </div>
+          <button onClick={handleCalendarClick} className="text-gray-300 hover:text-blue-400">
+            <Calendar size={20} />
+          </button>
         </div>
 
         {/* Sidebar Buttons */}
