@@ -41,7 +41,7 @@ export default function CustomCalendar() {
       console.log(userId)
       const eventsRes = await fetch(`http://localhost:5000/events/${userId}`);
       const eventsData = await eventsRes.json();
-
+      console.log(eventsData)
       const combined = [];
 
       if (projectsData.Success && Array.isArray(projectsData.projects)) {
@@ -57,7 +57,7 @@ export default function CustomCalendar() {
 
       if (eventsData.Success && Array.isArray(eventsData.events)) {
         const mappedEvents = eventsData.events.map((item) => ({
-          id: `event-${item.event_id || item.id}`,
+          id: item.event_id, 
           title: item.title,
           start: new Date(item.deadline),
           end: new Date(item.deadline),
