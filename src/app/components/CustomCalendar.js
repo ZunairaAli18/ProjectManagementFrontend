@@ -79,12 +79,48 @@ export default function CustomCalendar() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [currentView, setCurrentView] = useState(Views.MONTH);
 
-  const handleSelectSlot = ({ start, end }) => {
-    const title = prompt('Enter title');
-    if (title) {
-      setEvents([...events, { id: Date.now(), start, end, title }]);
+const handleSelectSlot = async ({ start, end }) => {
+  console.log('Selected slot:', start, end);
+  const title = prompt('Enter title');
+  if (!title || !userId) return;
+
+  try {
+    const response = await fetch('http://localhost:5000/events', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        user_id: userId,
+        title: title,
+        deadline: start.toLocaleDateString('en-CA'), // Convert JS date to YYYY-MM-DD
+      }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok && data.message === "Event created successfully") {
+      setEvents((prev) => [
+        ...prev,
+        {
+          id: Date.now(),
+          title: title,
+          start,
+          end,
+          type: 'event',
+        },
+      ]);
+    } else {
+      console.error(data.error || "Failed to create event.");
+      alert("Event creation failed.");
     }
-  };
+  } catch (error) {
+    console.error("Network error:", error);
+    alert("Failed to save event.");
+  }
+};
+
+
 
   const handleSelectEvent = async (event) => {
   const confirmDelete = confirm(`Are you sure you want to delete "${event.title}"?`);
@@ -193,7 +229,8 @@ return (
           onSelectSlot={handleSelectSlot}
           onSelectEvent={handleSelectEvent}
           onEventDrop={moveEvent}
-          
+          resizable={false}
+          onEventResize={null} 
           selectable
           defaultView={Views.MONTH}
           components={{
