@@ -2,15 +2,18 @@
 import { useEffect, useState } from 'react';
 import { Paperclip } from 'lucide-react';
 import { useRef } from 'react';
+import SelectAttachmentsModal from './SelectAttachmentsModal'
 export default function AddUserStoryModal({ onClose, onSave, onUpdate, projectId, storyToEdit }) {
   const fileInputRef = useRef(null);
   const [form, setForm] = useState(null); // null initially
   const [edit, setEdit] = useState(false);
+  const [showAttachmentModal, setShowAttachmentModal] = useState(false);
+  const [selectedAttachments, setSelectedAttachments] = useState([]);
+
   const openFileDialog = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
-    }
+    setShowAttachmentModal(true);
   };
+
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem('user'));
     const draft = JSON.parse(localStorage.getItem('story-draft'));
@@ -165,6 +168,21 @@ export default function AddUserStoryModal({ onClose, onSave, onUpdate, projectId
           </button>
         </div>
 </div>
+{showAttachmentModal && (
+  <SelectAttachmentsModal
+    onClose={() => setShowAttachmentModal(false)}
+    onConfirm={(selected) => {
+      setSelectedAttachments(selected); // stores selected attachment IDs or objects
+      setShowAttachmentModal(false);
+    }}
+    onBrowseUpload={() => {
+      setShowAttachmentModal(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.click();
+      }
+    }}
+  />
+)}
 
        
       </div>
