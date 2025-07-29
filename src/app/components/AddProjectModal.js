@@ -5,6 +5,25 @@ import { addProject, updateProject } from "@/lib/api/projects";
 export default function AddProjectModal({ onClose, onSave, projectToEdit }) {
   const [form, setForm] = useState(null); // initially null to detect "not yet initialized"
   const [edit, setEdit] = useState(false);
+  const [selectedFiles, setSelectedFiles] = useState([]);
+
+  const handleFileChange = (e) => {
+  const files = Array.from(e.target.files);
+// Filter out duplicates
+  const uniqueNewFiles = files.filter(
+    (file) => !selectedFiles.some((f) => f.name === file.name && f.size === file.size)
+  );
+
+  if (uniqueNewFiles.length === 0) return; // All were duplicates
+
+  setSelectedFiles((prev) => [...prev, ...uniqueNewFiles]);
+};
+const handleRemoveFile = (indexToRemove) => {
+  setSelectedFiles((prevFiles) =>
+    prevFiles.filter((_, index) => index !== indexToRemove)
+  );
+};
+
 
   // Load form only once when modal opens
   useEffect(() => {
@@ -65,36 +84,78 @@ export default function AddProjectModal({ onClose, onSave, projectToEdit }) {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    const { name, deadline, createdById, status_id } = form;
+  const { name, deadline, createdById, status_id } = form;
+  if (!name || !deadline) {
+    alert("Enter all required details");
+    return;
+  }
 
-    if (!name || !deadline) {
-      alert("Enter all required details");
-      return;
-    }
-
-    const payload = {
-      title: name,
-      deadline: deadline,
-      created_by: parseInt(createdById),
-      status_id: status_id
-    };
-
-    try {
-      if (edit && projectToEdit?.project_id) {
-        await updateProject({ title: name, deadline: deadline }, projectToEdit.project_id);
-      } else {
-        await addProject(payload);
-        localStorage.removeItem("project-draft"); // Clear only after successful save
-      }
-
-      onSave();
-      onClose();
-    } catch (err) {
-      alert("Failed to save project: " + err.message);
-    }
+  const payload = {
+    title: name,
+    deadline,
+    created_by: parseInt(createdById),
+    status_id,
   };
+
+  try {
+    let projectId;
+
+    // Step 1: Add or update project
+    if (edit && projectToEdit?.project_id) {
+      await updateProject({ title: name, deadline }, projectToEdit.project_id);
+      projectId = projectToEdit.project_id;
+    } else {
+      const res = await addProject(payload);
+      projectId = res.message;
+      localStorage.removeItem("project-draft");
+    }
+
+    // Step 2: Upload all selected files and collect attachment IDs
+    const attachmentIds = [];
+
+    for (const file of selectedFiles) {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("user_id", createdById);
+      formData.append("project_id",projectId.message)
+
+      const uploadRes = await fetch("http://localhost:5000/upload-attachment", {
+        method: "POST",
+        body: formData,
+      });
+     
+      const uploadData = await uploadRes.json();
+      console.log(uploadData)
+      if (uploadRes.ok && uploadData.attachment_id) {
+        attachmentIds.push(uploadData.attachment_id);
+      } else {
+        console.error("Upload failed for file:", file.name);
+      }
+    }
+    console.log("Sending attachment IDs:", attachmentIds);
+
+
+    // Step 3: Assign all attachments to the project (in one call)
+    if (attachmentIds.length > 0) {
+      await fetch("http://localhost:5000/assign-attachments", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          project_id: projectId,
+          attachment_ids: attachmentIds,
+        }),
+      });
+    }
+
+    onSave();
+    onClose();
+  } catch (err) {
+    console.error(err);
+    alert("Failed to save project and attachments: " + err.message);
+  }
+};
 
   const handleCancel = () => {
     onClose(); // Do not clear the draft on cancel
@@ -104,7 +165,7 @@ export default function AddProjectModal({ onClose, onSave, projectToEdit }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm">
-      <div className="bg-[#F0E4D3] p-6 rounded-lg shadow-lg w-[90%] max-w-2xl h-[600px] relative">
+<div className="bg-[#F0E4D3] p-6 rounded-lg shadow-lg w-[90%] max-w-2xl max-h-screen overflow-y-auto relative">
         <h2 className="text-4xl font-bold mb-8">
           {projectToEdit ? "Edit Project" : "Add New Project"}
         </h2>
@@ -142,6 +203,41 @@ export default function AddProjectModal({ onClose, onSave, projectToEdit }) {
           readOnly
           className="w-full h-[50px] bg-blue-100 border px-3 py-2 mb-8 rounded-lg shadow-lg cursor-not-allowed"
         />
+       <label className="flex items-center gap-2 cursor-pointer mb-2">
+  <span className="text-blue-600">📎 Attach Files</span>
+  <input
+    type="file"
+    multiple
+    onChange={handleFileChange}
+    className="hidden"
+  />
+</label>
+
+{selectedFiles.length > 0 && (
+  <div className="mt-2 mb-4">
+    <h4 className="font-semibold text-gray-800 mb-1">Selected Files:</h4>
+    <div className="flex flex-col gap-2 ">
+      {selectedFiles.map((file, idx) => (
+        <div
+          key={idx}
+          className="flex items-center  justify-between px-3 py-1 rounded shadow-sm text-sm text-gray-700 "
+        >
+          <span className="truncate">📄 {file.name}</span>
+          <button
+            onClick={() => handleRemoveFile(idx)}
+            className="text-red-500 hover:text-red-700 ml-3 text-sm"
+            title="Remove"
+          >
+            ❌
+          </button>
+        </div>
+      ))}
+    </div>
+  </div>
+)}
+
+
+
 
         <div className="flex justify-end gap-2">
           <button onClick={handleCancel} className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Cancel</button>

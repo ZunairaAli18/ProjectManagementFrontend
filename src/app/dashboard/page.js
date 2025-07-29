@@ -116,6 +116,7 @@ function DashboardContent() {
     try {
       const files = await fetchProjectAttachments(project.project_id);
       setAttachments(files);
+      console.log(files)
       setSelectedProjectTitle(project.title);
       setShowAttachmentsModal(true);
     } catch (err) {

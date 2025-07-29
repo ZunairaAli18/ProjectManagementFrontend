@@ -12,7 +12,7 @@ export default function ProjectCard({ project, onViewMembers, onEdit, onAssignMe
     if (status === 'Paused') return 'bg-gray-200 text-gray-800';
     return 'bg-red-100 text-red-800'; // Not Started
   };
-  console.log("ProjectCard received:", project); // 👈 check this
+  
   
   const handleAssignMember = () => {
     if (onAssignMembers) onAssignMembers(project.project_id);  };
