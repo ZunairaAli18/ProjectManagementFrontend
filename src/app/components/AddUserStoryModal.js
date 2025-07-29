@@ -170,9 +170,10 @@ export default function AddUserStoryModal({ onClose, onSave, onUpdate, projectId
 </div>
 {showAttachmentModal && (
   <SelectAttachmentsModal
+    projectId={projectId} // ✅ this is critical
     onClose={() => setShowAttachmentModal(false)}
     onConfirm={(selected) => {
-      setSelectedAttachments(selected); // stores selected attachment IDs or objects
+      setSelectedAttachments(selected);
       setShowAttachmentModal(false);
     }}
     onBrowseUpload={() => {
@@ -183,6 +184,7 @@ export default function AddUserStoryModal({ onClose, onSave, onUpdate, projectId
     }}
   />
 )}
+
 
        
       </div>

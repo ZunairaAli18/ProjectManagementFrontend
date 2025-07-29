@@ -1,35 +1,26 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { X, Paperclip, Upload } from 'lucide-react';
+import { fetchForStory } from '@/lib/api/fetchForStory';
 
-export default function SelectAttachmentsModal({ onClose, onConfirm, onBrowseUpload }) {
+export default function SelectAttachmentsModal({ onClose, onConfirm, onBrowseUpload, projectId }) {
   const [attachments, setAttachments] = useState([]);
   const [selected, setSelected] = useState([]);
 
   useEffect(() => {
-    // 🔹 Dummy data simulating backend
-    const dummyAttachments = [
-      {
-        attachment_id: 1,
-        name: 'UI_Mockup.pdf',
-        file_type: 'pdf',
-        created_by_name: 'Ali Raza',
-      },
-      {
-        attachment_id: 2,
-        name: 'ProjectPlan.docx',
-        file_type: 'docx',
-        created_by_name: 'Fatima Khan',
-      },
-      {
-        attachment_id: 3,
-        name: 'LogoDesign.png',
-        file_type: 'png',
-        created_by_name: 'Bilal Ahmed',
-      },
-    ];
-    setAttachments(dummyAttachments);
-  }, []);
+    const loadAttachments = async () => {
+      if (!projectId) return;
+
+      try {
+        const result = await fetchForStory(projectId);
+        setAttachments(result);
+      } catch (err) {
+        console.error("Failed to fetch attachments:", err.message);
+      }
+    };
+
+    loadAttachments();
+  }, [projectId]);
 
   const toggleSelection = (id) => {
     setSelected((prev) =>
@@ -44,7 +35,7 @@ export default function SelectAttachmentsModal({ onClose, onConfirm, onBrowseUpl
   };
 
   const handleBrowse = () => {
-    onBrowseUpload(); // no file handling since dummy
+    onBrowseUpload(); // will trigger system file picker in parent
     onClose();
   };
 
@@ -70,24 +61,28 @@ export default function SelectAttachmentsModal({ onClose, onConfirm, onBrowseUpl
 
         {/* Attachment List */}
         <div className="space-y-3 px-4">
-          {attachments.map((file) => (
-            <div
-              key={file.attachment_id}
-              onClick={() => toggleSelection(file.attachment_id)}
-              className={`flex items-center justify-between px-4 py-2 rounded-lg shadow-sm cursor-pointer border 
-                ${
-                  selected.includes(file.attachment_id)
-                    ? 'bg-orange-100 border-orange-400'
-                    : 'bg-white border-gray-300 hover:bg-orange-50'
-                }`}
-            >
-              <div className="flex flex-col">
-                <span className="text-gray-800 font-medium">{file.name}</span>
-                <span className="text-sm text-gray-500">Created by: {file.created_by_name}</span>
+          {attachments.length === 0 ? (
+            <p className="text-gray-600 text-center">No attachments found for this project.</p>
+          ) : (
+            attachments.map((file) => (
+              <div
+                key={file.attachment_id}
+                onClick={() => toggleSelection(file.attachment_id)}
+                className={`flex items-center justify-between px-4 py-2 rounded-lg shadow-sm cursor-pointer border 
+                  ${
+                    selected.includes(file.attachment_id)
+                      ? 'bg-orange-100 border-orange-400'
+                      : 'bg-white border-gray-300 hover:bg-orange-50'
+                  }`}
+              >
+                <div className="flex flex-col">
+                  <span className="text-gray-800 font-medium">{file.name}</span>
+                  <span className="text-sm text-gray-500">Created by: {file.created_by_name}</span>
+                </div>
+                <span className="text-sm text-gray-500">{file.file_type?.toUpperCase()}</span>
               </div>
-              <span className="text-sm text-gray-500">{file.file_type.toUpperCase()}</span>
-            </div>
-          ))}
+            ))
+          )}
         </div>
 
         {/* Bottom Buttons */}
