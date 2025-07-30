@@ -1,6 +1,6 @@
-'use client';
-import { useEffect, useState } from 'react';
-import Column from './Column';
+"use client";
+import { useEffect, useState } from "react";
+import Column from "./Column";
 
 export default function Board({ projectId }) {
   const [userStories, setUserStories] = useState([]);
@@ -10,11 +10,11 @@ export default function Board({ projectId }) {
 
     const fetchUserStories = async () => {
       try {
-        console.log(projectId)
-        const response = await fetch('http://localhost:5000/user-stories/all', {
-          method: 'POST',
+        console.log(projectId);
+        const response = await fetch("http://localhost:5000/user-stories/all", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({ project_id: projectId }),
         });
@@ -23,10 +23,10 @@ export default function Board({ projectId }) {
         if (data.Success) {
           setUserStories(data.stories || []);
         } else {
-          console.error('Failed to fetch user stories:', data.error);
+          console.error("Failed to fetch user stories:", data.error);
         }
       } catch (error) {
-        console.error('Error fetching user stories:', error);
+        console.error("Error fetching user stories:", error);
       }
     };
 
@@ -42,49 +42,49 @@ export default function Board({ projectId }) {
 
     // Update backend here if needed
     fetch(`http://localhost:5000/user-story/${story.story_id}/update-status`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({  status_id: newStatusId }),
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status_id: newStatusId }),
     }).catch(console.error);
 
     setUserStories(updatedStories);
   };
 
   const handleDragStart = (story_id) => {
-  window.draggedStoryId = story_id;
-};
-
+    window.draggedStoryId = story_id;
+  };
 
   const handleDrop = (newStatusId) => {
-  const storyId = window.draggedStoryId;
-  const storyIndex = userStories.findIndex((s) => s.story_id === storyId);
-  if (storyIndex !== -1) {
-    updateStoryStatus(storyIndex, newStatusId);
-  }
-};
-
- const onSaveStory = async (newStory) => {
-  try {
-    const response = await fetch('http://localhost:5000/user-stories', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(newStory),
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to save user story');
+    const storyId = window.draggedStoryId;
+    const storyIndex = userStories.findIndex((s) => s.story_id === storyId);
+    if (storyIndex !== -1) {
+      updateStoryStatus(storyIndex, newStatusId);
     }
+  };
 
-    const savedStory = await response.json();
-    setUserStories((prev) => [...prev, savedStory]);
-  } catch (error) {
-    console.error('Error saving user story:', error);
-    // Optional: show error to user
-  }
-};
+  const onSaveStory = async (newStory) => {
+    try {
+      const response = await fetch("http://localhost:5000/user-stories", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newStory),
+      });
 
+      if (!response.ok) {
+        throw new Error("Failed to save user story");
+      }
+
+      const savedStory = await response.json();
+      console.log(savedStory);
+      setUserStories((prev) => [...prev, savedStory]);
+      return savedStory;
+    } catch (error) {
+      console.error("Error saving user story:", error);
+      // Optional: show error to user
+    }
+  };
 
   const onUpdateStory = (updatedStory) => {
     setUserStories((prev) =>

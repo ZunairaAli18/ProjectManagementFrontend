@@ -1,13 +1,14 @@
 "use client";
 import { useEffect, useState } from "react";
 import { X, Paperclip, Upload } from "lucide-react";
-import { fetchForStory } from "@/lib/api/fetchForStory";
+import { fetchForStory } from "@/lib/api/userstory";
 
 export default function SelectAttachmentsModal({
   onClose,
   onConfirm,
   onBrowseUpload,
   projectId,
+  selectedAttachments,
 }) {
   const [attachments, setAttachments] = useState([]);
   const [selected, setSelected] = useState([]);
@@ -24,6 +25,16 @@ export default function SelectAttachmentsModal({
     };
     loadAttachments();
   }, [projectId]);
+  useEffect(() => {
+    // Whenever parent adds temp files, merge them
+    setAttachments((prev) => {
+      const ids = new Set(prev.map((a) => a.attachment_id));
+      return [
+        ...prev,
+        ...selectedAttachments.filter((a) => !ids.has(a.attachment_id)),
+      ];
+    });
+  }, [selectedAttachments]);
 
   const toggleSelection = (id) => {
     setSelected((prev) =>
@@ -32,14 +43,17 @@ export default function SelectAttachmentsModal({
   };
 
   const handleConfirm = () => {
-    console.log("Selected IDs:", selected);
-    onConfirm(selected);
+    const selectedAttachments = attachments.filter((file) =>
+      selected.includes(file.attachment_id)
+    );
+    console.log(selected, attachments, selectedAttachments);
+    onConfirm({ selected, attachments, selectedAttachments });
     onClose();
   };
 
   const handleBrowse = () => {
-    onBrowseUpload(); // will trigger system file picker in parent
-    onClose();
+    onBrowseUpload(); // triggers system file picker in parent
+    // onClose();
   };
 
   return (
@@ -52,6 +66,7 @@ export default function SelectAttachmentsModal({
         >
           <X size={24} />
         </button>
+
         {/* Title */}
         <div className="flex flex-col items-center mb-6">
           <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
@@ -59,6 +74,7 @@ export default function SelectAttachmentsModal({
           </h1>
         </div>
         <hr className="mb-4" />
+
         {/* Attachment List */}
         <div className="space-y-3 px-4">
           {attachments.length === 0 ? (
@@ -66,29 +82,53 @@ export default function SelectAttachmentsModal({
               No attachments found for this project.
             </p>
           ) : (
-            attachments.map((file) => (
-              <div
-                key={file.attachment_id}
-                onClick={() => toggleSelection(file.attachment_id)}
-                className={`flex items-center justify-between px-4 py-2 rounded-lg shadow-sm cursor-pointer border ${
-                  selected.includes(file.attachment_id)
-                    ? "bg-orange-100 border-orange-400"
-                    : "bg-white border-gray-300 hover:bg-orange-50"
-                }`}
-              >
-                <div className="flex flex-col">
-                  <span className="text-gray-800 font-medium">{file.name}</span>
-                  <span className="text-sm text-gray-500">
-                    Created by: {file.created_by_name}
-                  </span>
+            attachments.map((file) => {
+              const isSelected = selected.includes(file.attachment_id);
+              return (
+                <div
+                  key={file.attachment_id}
+                  onClick={() => toggleSelection(file.attachment_id)}
+                  className={`flex items-center justify-between px-4 py-2 rounded-lg shadow-sm cursor-pointer border ${
+                    isSelected
+                      ? "bg-orange-100 border-orange-400"
+                      : "bg-white border-gray-300 hover:bg-orange-50"
+                  }`}
+                >
+                  <div className="flex flex-col">
+                    <span className="text-gray-800 font-medium">
+                      {file.file_name}
+                    </span>
+                    <span className="text-sm text-gray-500">
+                      Created by: {file.uploaded_by}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <span className="text-sm text-gray-500">
+                      {file.file_type?.toUpperCase()}
+                    </span>
+                    {isSelected && (
+                      <span className="text-green-600 font-semibold">✓</span>
+                    )}
+                  </div>
                 </div>
-                <span className="text-sm text-gray-500">
-                  {file.file_type?.toUpperCase()}
-                </span>
-              </div>
-            ))
+              );
+            })
           )}
         </div>
+        {/* ✅ Selected attachments preview */}
+        {selected.length > 0 && (
+          <div className="mt-6 bg-gray-100 p-4 rounded-lg w-full">
+            <h4 className="font-semibold mb-2">Selected Attachments:</h4>
+            <ul className="list-disc pl-5">
+              {attachments
+                .filter((file) => selected.includes(file.attachment_id))
+                .map((file) => (
+                  <li key={file.attachment_id}>{file.file_name}</li>
+                ))}
+            </ul>
+          </div>
+        )}
         {/* Bottom Buttons */}
         <div className="flex justify-end gap-3 mt-6 px-4">
           <button
