@@ -156,6 +156,7 @@ function DashboardContent() {
           }}
           onSave={handleSaveProject}
           projectToEdit={projectToEdit}
+          onAssignMembers={handleAssignMembers}
         />
       )}
       {showUserModal && <AddUserModal onClose={() => setShowUserModal(false)} />}
