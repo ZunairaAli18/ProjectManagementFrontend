@@ -164,6 +164,7 @@ function DashboardContent() {
           onClose={() => {
             setShowModal(false);
             setProjectToEdit(null);
+            onAssignMembers={handleAssignMembers}
           }}
           onSave={handleSaveProject}
           projectToEdit={projectToEdit}
