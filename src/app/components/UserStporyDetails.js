@@ -1,7 +1,14 @@
-'use client';
-import { X, Paperclip, MessageSquareText } from 'lucide-react';
+"use client";
+import { X, Paperclip, MessageSquareText } from "lucide-react";
 
-export default function UserStoryDetails({ story,comments,attachments, onClose }) {
+export default function UserStoryDetails({
+  projectId,
+  story,
+  comments,
+  attachments,
+  onClose,
+}) {
+  const backendURL = "http://localhost:5000";
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm">
       <div className="relative bg-[#FFF7E9] shadow-xl rounded-xl p-8 w-[600px] max-h-[90vh] overflow-y-auto">
@@ -20,17 +27,16 @@ export default function UserStoryDetails({ story,comments,attachments, onClose }
 
         <hr className="mb-6" />
 
-        
-          {/* Story Info */}
+        {/* Story Info */}
         <div className="text-gray-800 space-y-3 px-4">
           <div className="flex justify-between">
             <span className="font-semibold">Story ID:</span>
             <span>{story.story_id}</span>
           </div>
-          
+
           <div className="flex justify-between">
             <span className="font-semibold">Estimated Time:</span>
-            <span>{story.estimated_time || '—'}</span>
+            <span>{story.estimated_time || "—"}</span>
           </div>
           <div className="flex justify-between">
             <span className="font-semibold">Created By (ID):</span>
@@ -67,18 +73,25 @@ export default function UserStoryDetails({ story,comments,attachments, onClose }
                 Attachments
               </h3>
               <ul className="list-disc list-inside text-blue-700 mt-2">
-                {attachments.map((file) => (
-                  <li key={file.attachment_id}>
-                    <a
-                      href={file.path}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="hover:underline"
+                {attachments.map((file) => {
+                  const downloadUrl = `${backendURL}/download-attachment?project_id=${projectId}&filename=${encodeURIComponent(file.filename)}`;
+
+                  return (
+                    <li
+                      className="flex items-center gap-8"
+                      key={file.attachment_id}
                     >
-                      {file.file_name}
-                    </a>
-                  </li>
-                ))}
+                      <a
+                        href={downloadUrl}
+                        download={file.filename}
+                        className="hover:underline"
+                      >
+                        {file.filename}
+                      </a>
+                      <p className="text-black">By: {file.uploaded_by}</p>
+                    </li>
+                  );
+                })}
               </ul>
             </div>
           </>
@@ -95,7 +108,10 @@ export default function UserStoryDetails({ story,comments,attachments, onClose }
               </h3>
               <ul className="space-y-3 mt-2">
                 {comments.map((comment) => (
-                  <li key={comment.comment_id} className="text-gray-800 bg-white p-3 rounded-lg shadow-sm">
+                  <li
+                    key={comment.comment_id}
+                    className="text-gray-800 bg-white p-3 rounded-lg shadow-sm"
+                  >
                     <div className="text-sm text-gray-600 mb-1">
                       <strong>{comment.commented_by}</strong> •{" "}
                       {new Date(comment.comment_time).toLocaleString()}

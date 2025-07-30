@@ -109,9 +109,10 @@ export default function AddUserStoryModal({
 
       // Step 2: Handle attachments (both new + existing)
       const uploadedAttachmentIds = [];
-
+      console.log(selectedAttachments);
       for (const attachment of selectedAttachments) {
         try {
+          console.log("attachment: ", attachment);
           if (attachment.file_object) {
             // New file -> upload now
             const formData = new FormData();
@@ -119,7 +120,7 @@ export default function AddUserStoryModal({
             formData.append("user_id", createdById);
             formData.append("project_id", projectId);
             formData.append("story_id", storyId);
-
+            console.log(formData);
             const uploadRes = await fetch(
               "http://localhost:5000/upload-attachment",
               {
@@ -234,7 +235,7 @@ export default function AddUserStoryModal({
                 setSelectedAttachments((prev) => [
                   ...prev,
                   ...files.map((file) => ({
-                    tempId: `temp-${Date.now()}-${file.name}`, // temp ID
+                    attachment_id: `temp-${Date.now()}-${file.name}`, // temp ID
                     file_name: file.name,
                     file_type: file.type,
                     uploaded_by: "You", // since just selected

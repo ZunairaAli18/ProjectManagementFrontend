@@ -1,8 +1,12 @@
-'use client';
-import { X, Paperclip } from 'lucide-react';
+"use client";
+import { X, Paperclip } from "lucide-react";
 
-export default function ProjectAttachmentsModal({ projectTitle, attachments, onClose }) {
-  const backendURL = "http://localhost:5000"; 
+export default function ProjectAttachmentsModal({
+  projectTitle,
+  attachments,
+  onClose,
+}) {
+  const backendURL = "http://localhost:5000";
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm">
       <div className="relative bg-[#FFF7E9] shadow-xl rounded-xl p-8 w-[600px] max-h-[90vh] overflow-y-auto">
@@ -26,11 +30,16 @@ export default function ProjectAttachmentsModal({ projectTitle, attachments, onC
               Overall Project Attachments
             </h3>
             <ul className="list-disc list-inside text-blue-700 mt-2">
-               {attachments.map((file) => {
-                const downloadUrl = `${backendURL}/download-attachment?project_id=${file.project_id}&filename=${encodeURIComponent(file.file_name)}`;
+              {attachments.map((file) => {
+                const downloadUrl = `${backendURL}/download-attachment?project_id=${
+                  file.project_id
+                }&filename=${encodeURIComponent(file.file_name)}`;
 
                 return (
-                  <li className="flex items-center gap-8" key={file.attachment_id}>
+                  <li
+                    className="flex items-center gap-8"
+                    key={file.attachment_id}
+                  >
                     <a
                       href={downloadUrl}
                       download={file.file_name} // <-- triggers download
@@ -45,7 +54,9 @@ export default function ProjectAttachmentsModal({ projectTitle, attachments, onC
             </ul>
           </div>
         ) : (
-          <p className="text-center text-gray-600">No attachments found for this project.</p>
+          <p className="text-center text-gray-600">
+            No attachments found for this project.
+          </p>
         )}
       </div>
     </div>
