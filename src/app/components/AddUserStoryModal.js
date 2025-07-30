@@ -1,19 +1,28 @@
-'use client';
-import { useEffect, useState } from 'react';
-import { Paperclip } from 'lucide-react';
-import { useRef } from 'react';
-export default function AddUserStoryModal({ onClose, onSave, onUpdate, projectId, storyToEdit }) {
+"use client";
+import { useEffect, useState } from "react";
+import { Paperclip } from "lucide-react";
+import { useRef } from "react";
+import SelectAttachmentsModal from "./SelectAttachmentsMOdal";
+export default function AddUserStoryModal({
+  onClose,
+  onSave,
+  onUpdate,
+  projectId,
+  storyToEdit,
+}) {
   const fileInputRef = useRef(null);
   const [form, setForm] = useState(null); // null initially
   const [edit, setEdit] = useState(false);
+  const [showAttachmentModal, setShowAttachmentModal] = useState(false);
+  const [selectedAttachments, setSelectedAttachments] = useState([]);
+
   const openFileDialog = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
-    }
+    setShowAttachmentModal(true);
   };
+
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem('user'));
-    const draft = JSON.parse(localStorage.getItem('story-draft'));
+    const user = JSON.parse(localStorage.getItem("user"));
+    const draft = JSON.parse(localStorage.getItem("story-draft"));
 
     if (!user) {
       alert("User not found in localStorage.");
@@ -23,18 +32,18 @@ export default function AddUserStoryModal({ onClose, onSave, onUpdate, projectId
     if (storyToEdit) {
       setEdit(true);
       setForm({
-        title: storyToEdit.title || '',
-        description: storyToEdit.description || '',
-        estimated_time: storyToEdit.estimated_time || '',
+        title: storyToEdit.title || "",
+        description: storyToEdit.description || "",
+        estimated_time: storyToEdit.estimated_time || "",
         createdBy: user[1],
         createdById: user[0],
         status_id: storyToEdit.status_id || 2,
       });
     } else {
       setForm({
-        title: draft?.title || '',
-        description: draft?.description || '',
-        estimated_time: draft?.estimated_time || '',
+        title: draft?.title || "",
+        description: draft?.description || "",
+        estimated_time: draft?.estimated_time || "",
         createdBy: user[1],
         createdById: user[0],
         status_id: 2,
@@ -45,18 +54,21 @@ export default function AddUserStoryModal({ onClose, onSave, onUpdate, projectId
   // Auto-save draft when typing (only in non-edit mode)
   useEffect(() => {
     if (!edit && form !== null) {
-      localStorage.setItem('story-draft', JSON.stringify({
-        title: form.title,
-        description: form.description,
-        estimated_time: form.estimated_time
-      }));
+      localStorage.setItem(
+        "story-draft",
+        JSON.stringify({
+          title: form.title,
+          description: form.description,
+          estimated_time: form.estimated_time,
+        })
+      );
     }
   }, [form?.title, form?.description, form?.estimated_time]);
 
   const handleChange = (e) => {
-    setForm(prev => ({
+    setForm((prev) => ({
       ...prev,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     }));
   };
 
@@ -94,11 +106,11 @@ export default function AddUserStoryModal({ onClose, onSave, onUpdate, projectId
 
   const handleClearDraft = () => {
     localStorage.removeItem("story-draft");
-    setForm(prev => ({
+    setForm((prev) => ({
       ...prev,
-      title: '',
-      description: '',
-      estimated_time: ''
+      title: "",
+      description: "",
+      estimated_time: "",
     }));
   };
 
@@ -136,37 +148,59 @@ export default function AddUserStoryModal({ onClose, onSave, onUpdate, projectId
           onChange={handleChange}
           className="w-full h-[50px] bg-blue-100 border px-3 py-2 mb-8 rounded-lg shadow-lg"
         />
-        <div className='justify-between items-center mt-4'><div className="flex items-center gap-2">
-      <button
-        type="button"
-        onClick={openFileDialog}
-        className="text-gray-600 hover:text-black flex items-center gap-1"
-      >
-        <Paperclip size={20} />
-        <span className="text-sm">Upload</span>
-      </button>
-
-      <input
-        type="file"
-        ref={fileInputRef}
-        className="hidden"
-        
-      />
-    </div>
- <div className="flex justify-end gap-2">
-          <button onClick={onClose} className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Cancel</button>
-          {!edit && (
-            <button onClick={handleClearDraft} type="button" className="px-4 py-2 bg-yellow-400 text-black rounded hover:bg-yellow-500">
-              Clear Draft
+        <div className="justify-between items-center mt-4">
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={openFileDialog}
+              className="text-gray-600 hover:text-black flex items-center gap-1"
+            >
+              <Paperclip size={20} />
+              <span className="text-sm">Upload</span>
             </button>
-          )}
-          <button onClick={handleSubmit} className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-            {storyToEdit ? "Update" : "Save"}
-          </button>
-        </div>
-</div>
 
-       
+            <input type="file" ref={fileInputRef} className="hidden" />
+          </div>
+          <div className="flex justify-end gap-2">
+            <button
+              onClick={onClose}
+              className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+            >
+              Cancel
+            </button>
+            {!edit && (
+              <button
+                onClick={handleClearDraft}
+                type="button"
+                className="px-4 py-2 bg-yellow-400 text-black rounded hover:bg-yellow-500"
+              >
+                Clear Draft
+              </button>
+            )}
+            <button
+              onClick={handleSubmit}
+              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            >
+              {storyToEdit ? "Update" : "Save"}
+            </button>
+          </div>
+        </div>
+        {showAttachmentModal && (
+          <SelectAttachmentsModal
+            projectId={projectId} // ✅ this is critical
+            onClose={() => setShowAttachmentModal(false)}
+            onConfirm={(selected) => {
+              setSelectedAttachments(selected);
+              setShowAttachmentModal(false);
+            }}
+            onBrowseUpload={() => {
+              setShowAttachmentModal(false);
+              if (fileInputRef.current) {
+                fileInputRef.current.click();
+              }
+            }}
+          />
+        )}
       </div>
     </div>
   );
