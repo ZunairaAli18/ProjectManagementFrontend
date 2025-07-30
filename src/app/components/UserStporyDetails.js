@@ -1,7 +1,12 @@
-'use client';
-import { X, Paperclip, MessageSquareText } from 'lucide-react';
+"use client";
+import { X, Paperclip, MessageSquareText } from "lucide-react";
 
-export default function UserStoryDetails({ story,comments,attachments, onClose }) {
+export default function UserStoryDetails({
+  story,
+  comments,
+  attachments,
+  onClose,
+}) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm">
       <div className="relative bg-[#FFF7E9] shadow-xl rounded-xl p-8 w-[600px] max-h-[90vh] overflow-y-auto">
@@ -20,17 +25,16 @@ export default function UserStoryDetails({ story,comments,attachments, onClose }
 
         <hr className="mb-6" />
 
-        
-          {/* Story Info */}
+        {/* Story Info */}
         <div className="text-gray-800 space-y-3 px-4">
           <div className="flex justify-between">
             <span className="font-semibold">Story ID:</span>
             <span>{story.story_id}</span>
           </div>
-          
+
           <div className="flex justify-between">
             <span className="font-semibold">Estimated Time:</span>
-            <span>{story.estimated_time || '—'}</span>
+            <span>{story.estimated_time || "—"}</span>
           </div>
           <div className="flex justify-between">
             <span className="font-semibold">Created By (ID):</span>
@@ -95,7 +99,10 @@ export default function UserStoryDetails({ story,comments,attachments, onClose }
               </h3>
               <ul className="space-y-3 mt-2">
                 {comments.map((comment) => (
-                  <li key={comment.comment_id} className="text-gray-800 bg-white p-3 rounded-lg shadow-sm">
+                  <li
+                    key={comment.comment_id}
+                    className="text-gray-800 bg-white p-3 rounded-lg shadow-sm"
+                  >
                     <div className="text-sm text-gray-600 mb-1">
                       <strong>{comment.commented_by}</strong> •{" "}
                       {new Date(comment.comment_time).toLocaleString()}
