@@ -1,19 +1,30 @@
-'use client';
-import { useEffect, useState } from 'react';
-import { Paperclip } from 'lucide-react';
-import { useRef } from 'react';
-export default function AddUserStoryModal({ onClose, onSave, onUpdate, projectId, storyToEdit }) {
+"use client";
+import { useEffect, useState } from "react";
+import { Paperclip } from "lucide-react";
+import { useRef } from "react";
+import SelectAttachmentsModal from "./SelectAttachmentsMOdal";
+import { useSelector } from "react-redux";
+
+export default function AddUserStoryModal({
+  onClose,
+  onSave,
+  onUpdate,
+  projectId,
+  storyToEdit,
+}) {
   const fileInputRef = useRef(null);
   const [form, setForm] = useState(null); // null initially
   const [edit, setEdit] = useState(false);
+  const [showAttachmentModal, setShowAttachmentModal] = useState(false);
+  const [selectedAttachments, setSelectedAttachments] = useState([]);
+
   const openFileDialog = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
-    }
+    setShowAttachmentModal(true);
   };
+  const user = useSelector((state) => state.auth.user);
+
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem('user'));
-    const draft = JSON.parse(localStorage.getItem('story-draft'));
+    const draft = JSON.parse(localStorage.getItem("story-draft"));
 
     if (!user) {
       alert("User not found in localStorage.");
@@ -23,20 +34,20 @@ export default function AddUserStoryModal({ onClose, onSave, onUpdate, projectId
     if (storyToEdit) {
       setEdit(true);
       setForm({
-        title: storyToEdit.title || '',
-        description: storyToEdit.description || '',
-        estimated_time: storyToEdit.estimated_time || '',
-        createdBy: user[1],
-        createdById: user[0],
+        title: storyToEdit.title || "",
+        description: storyToEdit.description || "",
+        estimated_time: storyToEdit.estimated_time || "",
+        createdBy: user.name,
+        createdById: user.user_id,
         status_id: storyToEdit.status_id || 2,
       });
     } else {
       setForm({
-        title: draft?.title || '',
-        description: draft?.description || '',
-        estimated_time: draft?.estimated_time || '',
-        createdBy: user[1],
-        createdById: user[0],
+        title: draft?.title || "",
+        description: draft?.description || "",
+        estimated_time: draft?.estimated_time || "",
+        createdBy: user.name,
+        createdById: user.user_id,
         status_id: 2,
       });
     }
@@ -45,18 +56,21 @@ export default function AddUserStoryModal({ onClose, onSave, onUpdate, projectId
   // Auto-save draft when typing (only in non-edit mode)
   useEffect(() => {
     if (!edit && form !== null) {
-      localStorage.setItem('story-draft', JSON.stringify({
-        title: form.title,
-        description: form.description,
-        estimated_time: form.estimated_time
-      }));
+      localStorage.setItem(
+        "story-draft",
+        JSON.stringify({
+          title: form.title,
+          description: form.description,
+          estimated_time: form.estimated_time,
+        })
+      );
     }
   }, [form?.title, form?.description, form?.estimated_time]);
 
   const handleChange = (e) => {
-    setForm(prev => ({
+    setForm((prev) => ({
       ...prev,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     }));
   };
 
@@ -80,25 +94,89 @@ export default function AddUserStoryModal({ onClose, onSave, onUpdate, projectId
     };
 
     try {
+      let storyId;
+
+      // Step 1: Add or update story
       if (edit && onUpdate && storyToEdit?.story_id) {
         await onUpdate(payload, storyToEdit.story_id);
+        storyId = storyToEdit.story_id;
       } else {
-        await onSave(payload);
+        const res = await onSave(payload);
+        console.log("Story saved: ", res);
+        storyId = res.story_id;
         localStorage.removeItem("story-draft");
       }
+
+      // Step 2: Handle attachments (both new + existing)
+      const uploadedAttachmentIds = [];
+      console.log(selectedAttachments);
+      for (const attachment of selectedAttachments) {
+        try {
+          console.log("attachment: ", attachment);
+          if (attachment.file_object) {
+            // New file -> upload now
+            const formData = new FormData();
+            formData.append("file", attachment.file_object);
+            formData.append("user_id", createdById);
+            formData.append("project_id", projectId);
+            formData.append("story_id", storyId);
+            console.log(formData);
+            const uploadRes = await fetch(
+              "http://localhost:5000/upload-attachment",
+              {
+                method: "POST",
+                body: formData,
+              }
+            );
+
+            const uploadData = await uploadRes.json();
+            console.log("data uploaded", uploadData);
+            if (uploadRes.ok && uploadData.attachment_id) {
+              uploadedAttachmentIds.push(uploadData.attachment_id);
+
+              // Update the local object with the real ID
+              attachment.attachment_id = uploadData.attachment_id;
+              delete attachment.file_object; // not needed anymore
+            } else {
+              console.error("Upload failed:", attachment.file_name, uploadData);
+            }
+          } else if (attachment.attachment_id) {
+            // Existing attachment
+            uploadedAttachmentIds.push(attachment.attachment_id);
+          }
+        } catch (err) {
+          console.error("Error uploading attachment:", err);
+        }
+      }
+
+      console.log("✅ Final uploaded IDs:", uploadedAttachmentIds);
+
+      // Step 3: Assign each attachment individually
+      for (const attachmentId of uploadedAttachmentIds) {
+        await fetch("http://localhost:5000/assign-attachment-to-story", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            attachment_id: attachmentId,
+            project_id: projectId,
+            user_story_id: storyId,
+          }),
+        });
+      }
+
       onClose();
     } catch (err) {
-      alert("Failed to save user story: " + err.message);
+      alert("Failed to save user story and attachments: " + err.message);
     }
   };
 
   const handleClearDraft = () => {
     localStorage.removeItem("story-draft");
-    setForm(prev => ({
+    setForm((prev) => ({
       ...prev,
-      title: '',
-      description: '',
-      estimated_time: ''
+      title: "",
+      description: "",
+      estimated_time: "",
     }));
   };
 
@@ -136,37 +214,83 @@ export default function AddUserStoryModal({ onClose, onSave, onUpdate, projectId
           onChange={handleChange}
           className="w-full h-[50px] bg-blue-100 border px-3 py-2 mb-8 rounded-lg shadow-lg"
         />
-        <div className='justify-between items-center mt-4'><div className="flex items-center gap-2">
-      <button
-        type="button"
-        onClick={openFileDialog}
-        className="text-gray-600 hover:text-black flex items-center gap-1"
-      >
-        <Paperclip size={20} />
-        <span className="text-sm">Upload</span>
-      </button>
-
-      <input
-        type="file"
-        ref={fileInputRef}
-        className="hidden"
-        
-      />
-    </div>
- <div className="flex justify-end gap-2">
-          <button onClick={onClose} className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Cancel</button>
-          {!edit && (
-            <button onClick={handleClearDraft} type="button" className="px-4 py-2 bg-yellow-400 text-black rounded hover:bg-yellow-500">
-              Clear Draft
+        <div className="justify-between items-center mt-4">
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={openFileDialog}
+              className="text-gray-600 hover:text-black flex items-center gap-1"
+            >
+              <Paperclip size={20} />
+              <span className="text-sm">Upload</span>
             </button>
-          )}
-          <button onClick={handleSubmit} className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-            {storyToEdit ? "Update" : "Save"}
-          </button>
-        </div>
-</div>
 
-       
+            <input
+              type="file"
+              ref={fileInputRef}
+              className="hidden"
+              multiple // ✅ allow multiple selection
+              onChange={(e) => {
+                const files = Array.from(e.target.files || []);
+                setSelectedAttachments((prev) => [
+                  ...prev,
+                  ...files.map((file) => ({
+                    attachment_id: `temp-${Date.now()}-${file.name}`, // temp ID
+                    file_name: file.name,
+                    file_type: file.type,
+                    uploaded_by: "You", // since just selected
+                    file_object: file, // keep file object for upload
+                  })),
+                ]);
+              }}
+            />
+          </div>
+          <div className="flex justify-end gap-2">
+            <button
+              onClick={onClose}
+              className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+            >
+              Cancel
+            </button>
+            {!edit && (
+              <button
+                onClick={handleClearDraft}
+                type="button"
+                className="px-4 py-2 bg-yellow-400 text-black rounded hover:bg-yellow-500"
+              >
+                Clear Draft
+              </button>
+            )}
+            <button
+              onClick={handleSubmit}
+              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            >
+              {storyToEdit ? "Update" : "Save"}
+            </button>
+          </div>
+        </div>
+        {showAttachmentModal && (
+          <SelectAttachmentsModal
+            projectId={projectId}
+            selectedAttachments={selectedAttachments}
+            onClose={() => setShowAttachmentModal(false)}
+            onConfirm={({ selected, attachments, selectedAttachments }) => {
+              // Store the actual selected attachment objects
+              setSelectedAttachments(selectedAttachments);
+              setShowAttachmentModal(false);
+
+              // For debugging:
+              console.log("Selected IDs:", selected);
+              console.log("All attachments:", attachments);
+              console.log("Selected objects:", selectedAttachments);
+            }}
+            onBrowseUpload={() => {
+              if (fileInputRef.current) {
+                fileInputRef.current.click();
+              }
+            }}
+          />
+        )}
       </div>
     </div>
   );

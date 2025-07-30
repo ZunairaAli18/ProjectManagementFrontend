@@ -2,11 +2,13 @@
 import { X, Paperclip, MessageSquareText } from "lucide-react";
 
 export default function UserStoryDetails({
+  projectId,
   story,
   comments,
   attachments,
   onClose,
 }) {
+  const backendURL = "http://localhost:5000";
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm">
       <div className="relative bg-[#FFF7E9] shadow-xl rounded-xl p-8 w-[600px] max-h-[90vh] overflow-y-auto">
@@ -71,18 +73,25 @@ export default function UserStoryDetails({
                 Attachments
               </h3>
               <ul className="list-disc list-inside text-blue-700 mt-2">
-                {attachments.map((file) => (
-                  <li key={file.attachment_id}>
-                    <a
-                      href={file.path}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="hover:underline"
+                {attachments.map((file) => {
+                  const downloadUrl = `${backendURL}/download-attachment?project_id=${projectId}&filename=${encodeURIComponent(file.filename)}`;
+
+                  return (
+                    <li
+                      className="flex items-center gap-8"
+                      key={file.attachment_id}
                     >
-                      {file.file_name}
-                    </a>
-                  </li>
-                ))}
+                      <a
+                        href={downloadUrl}
+                        download={file.filename}
+                        className="hover:underline"
+                      >
+                        {file.filename}
+                      </a>
+                      <p className="text-black">By: {file.uploaded_by}</p>
+                    </li>
+                  );
+                })}
               </ul>
             </div>
           </>
