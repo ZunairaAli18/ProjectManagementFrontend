@@ -1,21 +1,26 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import SideBar from '../components/SideBar';
-import ProjectCard from '../components/ProjectCard';
-import Header from '../components/Header';
-import AddProjectModal from '../components/AddProjectModal';
-import AddUserModal from '../components/AddUserModal';
-import SingleProjectMembersPanel from '../components/SingleProjectMembersPanel';
-import MembersPanel from '../components/MembersPanel';
-import ProjectAttachmentsModal from '../components/ProjectAttachments';
-import { getAllProjects, getProjectsCreatedByEmail ,getAllMyProjectsByEmail } from '@/lib/api/projects';
-import { fetchProjectAttachments } from '@/lib/api/fetchProjectAttachments';
-import { useSearchParams } from 'next/navigation';
-import Guard from '../components/Guard'; // ✅ Import your guard
-import DebugAuth from '../debug-auth';
-import { useSelector } from 'react-redux';
-import { Upload } from 'lucide-react';
+import { useEffect, useState } from "react";
+import SideBar from "../components/SideBar";
+import ProjectCard from "../components/ProjectCard";
+import Header from "../components/Header";
+import AddProjectModal from "../components/AddProjectModal";
+import AddUserModal from "../components/AddUserModal";
+import SingleProjectMembersPanel from "../components/SingleProjectMembersPanel";
+import MembersPanel from "../components/MembersPanel";
+import ProjectAttachmentsModal from "../components/ProjectAttachments";
+import {
+  getAllProjects,
+  getProjectsCreatedByEmail,
+  getAllMyProjectsByEmail,
+} from "@/lib/api/projects";
+import { fetchProjectAttachments } from "@/lib/api/fetchProjectAttachments";
+import { useSearchParams } from "next/navigation";
+import Guard from "../components/Guard"; // ✅ Import your guard
+import DebugAuth from "../debug-auth";
+import { useSelector } from "react-redux";
+import { Upload } from "lucide-react";
+import BotpressChatbot from "../components/BotPressChatbot";
 
 export default function Page() {
   return (
@@ -37,18 +42,18 @@ function DashboardContent() {
   const [showAssignPanel, setShowAssignPanel] = useState(false);
   const [attachments, setAttachments] = useState([]);
   const [showAttachmentsModal, setShowAttachmentsModal] = useState(false);
-  const [selectedProjectTitle, setSelectedProjectTitle] = useState('');
+  const [selectedProjectTitle, setSelectedProjectTitle] = useState("");
   const user = useSelector((state) => state.auth.user);
   useEffect(() => {
     const fetchProjects = async () => {
-      const view = SearchParams.get('view');
-      
+      const view = SearchParams.get("view");
+
       const email = user.email;
       const statusMap = {
         1: "Paused",
         2: "Yet to Start",
         3: "In Progress",
-        4: "Completed"
+        4: "Completed",
       };
 
       if (!email) {
@@ -58,25 +63,25 @@ function DashboardContent() {
 
       try {
         let data = [];
-        if (view === 'created') {
+        if (view === "created") {
           data = await getProjectsCreatedByEmail(email);
-        } else if (view === 'myprojects') {
+        } else if (view === "myprojects") {
           data = await getAllMyProjectsByEmail(email);
         } else {
           data = await getAllProjects();
         }
 
-        const normalized = data.map(p => ({
+        const normalized = data.map((p) => ({
           ...p,
           created_by: p.created_by || user[1],
           created_by_id: p.created_by_id || user[0],
-          status: p.status || statusMap[p.status_id] || "Yet to Start"
+          status: p.status || statusMap[p.status_id] || "Yet to Start",
         }));
 
         setProjects(normalized);
       } catch (err) {
-        console.error('Error fetching projects:', err.message);
-        alert('Could not load projects. Please try again.');
+        console.error("Error fetching projects:", err.message);
+        alert("Could not load projects. Please try again.");
       }
     };
 
@@ -116,7 +121,7 @@ function DashboardContent() {
     try {
       const files = await fetchProjectAttachments(project.project_id);
       setAttachments(files);
-      console.log(files)
+      console.log(files);
       setSelectedProjectTitle(project.title);
       setShowAttachmentsModal(true);
     } catch (err) {
@@ -129,9 +134,16 @@ function DashboardContent() {
     <>
       <div className="flex relative">
         <SideBar />
-      
-        <div className={`flex-1 p-6 bg-[#FFE6E1] min-h-screen transition duration-300 ${showModal ? 'blur-sm' : ''}`}>
-          <Header onAddProjectClick={() => setShowModal(true)} onAddUserClick={() => setShowUserModal(true)} />
+        <BotpressChatbot />
+        <div
+          className={`flex-1 p-6 bg-[#FFE6E1] min-h-screen transition duration-300 ${
+            showModal ? "blur-sm" : ""
+          }`}
+        >
+          <Header
+            onAddProjectClick={() => setShowModal(true)}
+            onAddUserClick={() => setShowUserModal(true)}
+          />
           <div className="h-[calc(100vh-120px)] overflow-y-auto pr-2">
             {projects.map((project, index) => (
               <ProjectCard
@@ -146,7 +158,6 @@ function DashboardContent() {
           </div>
         </div>
       </div>
-    
 
       {showModal && (
         <AddProjectModal
@@ -158,7 +169,9 @@ function DashboardContent() {
           projectToEdit={projectToEdit}
         />
       )}
-      {showUserModal && <AddUserModal onClose={() => setShowUserModal(false)} />}
+      {showUserModal && (
+        <AddUserModal onClose={() => setShowUserModal(false)} />
+      )}
       {showMembersModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-black/30">
           <button
