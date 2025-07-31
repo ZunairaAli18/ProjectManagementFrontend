@@ -28,13 +28,13 @@ function SettingsDashboard() {
     try {
       const res = await changePassword(user.email, newPass);
       if (res.success) {
-        alert("✅ Password updated successfully!");
+        alert("Password updated successfully!");
         setShowChangePassword(false);
       } else {
-        alert("❌ Failed to update password: " + res.message);
+        alert("Failed to update password: " + res.message);
       }
     } catch (err) {
-      alert("❌ Error: " + err.message);
+      alert("Error: " + err.message);
     }
   };
 
@@ -77,7 +77,7 @@ function SettingsDashboard() {
       {showChangePassword && (
         <ChangePasswordModal
           onClose={() => setShowChangePassword(false)}
-          onConfirm={handleConfirmPassword} // ✅ Integrated with backend
+          onConfirm={handleConfirmPassword}
         />
       )}
     </div>
