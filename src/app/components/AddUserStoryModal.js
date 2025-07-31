@@ -22,7 +22,6 @@ export default function AddUserStoryModal({
     setShowAttachmentModal(true);
   };
   const user = useSelector((state) => state.auth.user);
-
   useEffect(() => {
     const draft = JSON.parse(localStorage.getItem("story-draft"));
 
@@ -32,6 +31,7 @@ export default function AddUserStoryModal({
     }
 
     if (storyToEdit) {
+      console.log("Editing story:", storyToEdit);
       setEdit(true);
       setForm({
         title: storyToEdit.title || "",
@@ -40,8 +40,10 @@ export default function AddUserStoryModal({
         createdBy: user.name,
         createdById: user.user_id,
         status_id: storyToEdit.status_id || 2,
+        story_id: storyToEdit.story_id, // include story_id for updates
       });
     } else {
+      setEdit(false);
       setForm({
         title: draft?.title || "",
         description: draft?.description || "",
@@ -51,21 +53,25 @@ export default function AddUserStoryModal({
         status_id: 2,
       });
     }
-  }, [storyToEdit]);
+  }, [storyToEdit, user]); // include user so it's always fresh
 
-  // Auto-save draft when typing (only in non-edit mode)
+  // Watch form updates AFTER setForm runs
   useEffect(() => {
-    if (!edit && form !== null) {
+    if (form) {
+      console.log("Form updated:", form);
+    }
+  }, [form]);
+
+  // Auto-save draft (only if not editing)
+  useEffect(() => {
+    if (!edit && form) {
+      const { title, description, estimated_time } = form;
       localStorage.setItem(
         "story-draft",
-        JSON.stringify({
-          title: form.title,
-          description: form.description,
-          estimated_time: form.estimated_time,
-        })
+        JSON.stringify({ title, description, estimated_time })
       );
     }
-  }, [form?.title, form?.description, form?.estimated_time]);
+  }, [form, edit]);
 
   const handleChange = (e) => {
     setForm((prev) => ({
@@ -91,6 +97,7 @@ export default function AddUserStoryModal({
       project_id: projectId,
       created_by: parseInt(createdById),
       status_id: 2,
+      story_id: form.story_id || null, // use existing ID if editing
     };
 
     try {
@@ -98,7 +105,11 @@ export default function AddUserStoryModal({
 
       // Step 1: Add or update story
       if (edit && onUpdate && storyToEdit?.story_id) {
-        await onUpdate(payload, storyToEdit.story_id);
+        console.log(payload);
+        console.log("Updating story:", storyToEdit.story_id);
+
+        await onUpdate(payload);
+
         storyId = storyToEdit.story_id;
       } else {
         const res = await onSave(payload);

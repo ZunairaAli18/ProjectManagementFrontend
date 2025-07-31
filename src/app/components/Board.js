@@ -85,11 +85,50 @@ export default function Board({ projectId }) {
       // Optional: show error to user
     }
   };
+  const onUpdateStory = async (updatedStory) => {
+    try {
+      console.log("Updating story:", updatedStory);
+      const response = await fetch(
+        `http://localhost:5000/user-stories/${updatedStory.story_id}/edit`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            title: updatedStory.title,
+            description: updatedStory.description,
+            status_id: updatedStory.status_id,
+            estimated_time: updatedStory.estimated_time,
+          }),
+        }
+      );
 
-  const onUpdateStory = (updatedStory) => {
-    setUserStories((prev) =>
-      prev.map((s) => (s.story_id === updatedStory.story_id ? updatedStory : s))
-    );
+      // const data = await response.json();
+      const text = await response.text(); // 👈 read raw text
+      console.log("Raw response:", text);
+
+      let data;
+      try {
+        data = JSON.parse(text); // try parse JSON manually
+      } catch (err) {
+        throw new Error("Response is not valid JSON: " + text);
+      }
+      if (response.ok && data.Success) {
+        setUserStories((prev) =>
+          prev.map((s) =>
+            s.story_id === updatedStory.story_id ? updatedStory : s
+          )
+        );
+        console.log("✅ Story updated successfully:", updatedStory,userStories);
+      } else {
+        console.error("❌ Update failed:", data.error || data.message);
+        alert(data.error || "Failed to update story");
+      }
+    } catch (err) {
+      console.error("❌ Error updating story:", err);
+      alert("An error occurred while updating the story.");
+    }
   };
 
   const toDo = userStories.filter((s) => s.status_id === 2);

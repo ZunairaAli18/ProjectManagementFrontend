@@ -34,7 +34,7 @@ export default function AssignMemberButton({ projectId, userStoryId, member }) {
     } finally {
       setIsAssigning(false);
     }
-  };  
+  };
 
   return (
     <button
@@ -48,7 +48,7 @@ export default function AssignMemberButton({ projectId, userStoryId, member }) {
         ? "Assigned"
         : isAssigning
         ? "Assigning..."
-        : projectId || noId
+        : projectId
         ? "Assign to Project"
         : "Assign to User Story"}
     </button>

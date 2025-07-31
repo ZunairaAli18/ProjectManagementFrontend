@@ -20,7 +20,7 @@ export default function MembersPanel({ projectId, userStoryId, isAssigning }) {
           ? await unassignedUsers(userStoryId)
           : await assignedUsers(userStoryId);
         setMembers(data.members);
-      } else if (projectId) {
+      } else {
         const data = isAssigning
           ? await getUnassignedUsers(projectId)
           : await fetchMembers();
