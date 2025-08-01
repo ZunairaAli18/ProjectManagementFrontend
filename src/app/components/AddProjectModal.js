@@ -117,7 +117,7 @@ export default function AddProjectModal({
     const payload = {
       title: name,
       deadline,
-      created_by: parseInt(createdById),
+      created_by: parseInt(user.user_id,
       status_id,
     };
     let savedProjectId;
@@ -140,7 +140,7 @@ export default function AddProjectModal({
       for (const file of selectedFiles) {
         const formData = new FormData();
         formData.append("file", file);
-        formData.append("user_id", createdById);
+        formData.append("user_id", user.user_id);
         formData.append("project_id", savedProjectId);
 
         const uploadRes = await fetch(
