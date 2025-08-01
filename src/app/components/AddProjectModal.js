@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { addProject, updateProject } from "@/lib/api/projects";
 import { useSelector } from "react-redux";
 import MembersPanel from "./MembersPanel";
+import { useRef } from "react";
 
 export default function AddProjectModal({
   onClose,
@@ -17,6 +18,18 @@ export default function AddProjectModal({
   const [showAssignPanel, setShowAssignPanel] = useState(false);
   const [enable, setEnable] = useState(false);
   const [projectId, setProjectId] = useState(null); // ✅ Store project ID
+  const modalRef = useRef(null);
+  useEffect(() => {
+    const handleOutsideClick = (e) => {
+      if (modalRef.current && !modalRef.current.contains(e.target)) {
+        onClose();
+      }
+    };
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, []);
   const openAssignPanel = () => {
     setShowAssignPanel(true);
   };
@@ -189,7 +202,10 @@ export default function AddProjectModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm">
-      <div className="bg-[#F0E4D3] p-6 rounded-lg shadow-lg w-[90%] max-w-2xl max-h-screen overflow-y-auto relative">
+      <div
+        ref={modalRef}
+        className="bg-[#F0E4D3] p-6 rounded-lg shadow-lg w-[90%] max-w-2xl max-h-screen overflow-y-auto relative"
+      >
         <h2 className="text-4xl font-bold mb-8">
           {projectToEdit ? "Edit Project" : "Add New Project"}
         </h2>
@@ -296,12 +312,6 @@ export default function AddProjectModal({
       {showAssignPanel && projectId && (
         <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-black/30">
           {/* Close button */}
-          <button
-            onClick={closeAssignPanel}
-            className="absolute top-4 right-4 text-gray-600 hover:text-red-500 text-xl font-bold"
-          >
-            ×
-          </button>
 
           <MembersPanel
             isAssigning={true} // or false depending on logic

@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Card from "./Card";
 import AddUserStoryModal from "./AddUserStoryModal";
 import UserStporyDetails from "./UserStporyDetails";
@@ -123,6 +123,9 @@ export default function Column({
           <MembersPanel
             userStoryId={selectedStory?.story_id} // Pass the story_id if available
             isAssigning={isAssigning}
+            onclose={() => {
+              setShowMembersPanel(false);
+            }}
           />
         </div>
       )}

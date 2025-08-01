@@ -1,12 +1,28 @@
 "use client";
 import MemberProfile from "./MemberProfile";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { fetchMembers, getUnassignedUsers } from "../../lib/api/Members";
 import { assignedUsers, unassignedUsers } from "../../lib/api/userstory";
 
-export default function MembersPanel({ projectId, userStoryId, isAssigning }) {
+export default function MembersPanel({
+  projectId,
+  userStoryId,
+  isAssigning,
+  onclose,
+}) {
   const [members, setMembers] = useState([]);
   const [selectedMember, setSelectedMember] = useState(null);
+  const modalRef = useRef(null);
+  // Close modal on outside click
+  useEffect(() => {
+    const handleOutsideClick = (e) => {
+      if (modalRef.current && !modalRef.current.contains(e.target)) {
+        onclose();
+      }
+    };
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => document.removeEventListener("mousedown", handleOutsideClick);
+  }, []);
 
   useEffect(() => {
     async function loadMembers() {
@@ -36,7 +52,7 @@ export default function MembersPanel({ projectId, userStoryId, isAssigning }) {
       className="fixed top-25 bottom-10 left-110 bg-white rounded-lg border shadow-lg z-50 overflow-hidden"
       style={{ width: "1200px", height: "80vh" }}
     >
-      <div className="flex h-full">
+      <div ref={modalRef} className="flex h-full">
         {/* Left 40% */}
         <div className="w-[40%] border-r overflow-y-auto p-4">
           {/* Heading */}

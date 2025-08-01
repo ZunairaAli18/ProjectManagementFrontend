@@ -1,5 +1,6 @@
 "use client";
-import { X, Paperclip, MessageSquareText } from "lucide-react";
+import { X, Paperclip, MessageSquareText, Import } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
 
 export default function UserStoryDetails({
   projectId,
@@ -9,9 +10,23 @@ export default function UserStoryDetails({
   onClose,
 }) {
   const backendURL = "http://localhost:5000";
+  const modalRef = useRef(null);
+  // Close modal on outside click
+  useEffect(() => {
+    const handleOutsideClick = (e) => {
+      if (modalRef.current && !modalRef.current.contains(e.target)) {
+        onClose();
+      }
+    };
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => document.removeEventListener("mousedown", handleOutsideClick);
+  }, []);
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm">
-      <div className="relative bg-[#FFF7E9] shadow-xl rounded-xl p-8 w-[600px] max-h-[90vh] overflow-y-auto">
+      <div
+        ref={modalRef}
+        className="relative bg-[#FFF7E9] shadow-xl rounded-xl p-8 w-[600px] max-h-[90vh] overflow-y-auto"
+      >
         {/* Close button */}
         <button
           onClick={onClose}
@@ -74,7 +89,9 @@ export default function UserStoryDetails({
               </h3>
               <ul className="list-disc list-inside text-blue-700 mt-2">
                 {attachments.map((file) => {
-                  const downloadUrl = `${backendURL}/download-attachment?project_id=${projectId}&filename=${encodeURIComponent(file.filename)}`;
+                  const downloadUrl = `${backendURL}/download-attachment?project_id=${projectId}&filename=${encodeURIComponent(
+                    file.filename
+                  )}`;
 
                   return (
                     <li
