@@ -117,7 +117,7 @@ export default function AddProjectModal({
     const payload = {
       title: name,
       deadline,
-      created_by: parseInt(user.user_id,
+      created_by: parseInt(user.user_id),
       status_id,
     };
     let savedProjectId;
