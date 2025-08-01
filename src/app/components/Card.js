@@ -6,7 +6,9 @@ import {
   FileText,
   MessageCircleCodeIcon,
 } from "lucide-react";
-
+import { useState } from "react";
+import { useSelector } from "react-redux";
+import CommentModal from "./commentMOdal";
 export default function Card({
   task,
   onDragStart,
@@ -15,6 +17,8 @@ export default function Card({
   onViewMembers,
   onAssignMember,
 }) {
+  const user = useSelector((state) => state.auth.user);
+  const [showCommentModal, setShowCommentModal] = useState(false);
   return (
     <div
       draggable
@@ -43,7 +47,13 @@ export default function Card({
         >
           <UserPlus className="w-4 h-4 text-green-600 hover:text-green-800" />
         </button>
-        <MessageCircleCodeIcon className="w-4 h-4 text-orange-700 hover:text-orange-900" />
+        <button
+          onClick={() => setShowCommentModal(true)}
+          title="Add Comment"
+          className="hover:scale-110 transition"
+        >
+          <MessageCircleCodeIcon className="w-4 h-4 text-orange-700 hover:text-orange-900" />
+        </button>{" "}
         <button
           onClick={() => onEditStoryModal?.(task)}
           title="Edit Story"
@@ -59,6 +69,13 @@ export default function Card({
           <FileText className="w-4 h-4 text-gray-600 hover:text-black" />
         </button>
       </div>
+      {showCommentModal && (
+        <CommentModal
+          taskId={task.story_id}
+          userId={user.user_id} // replace with actual logged-in user
+          onClose={() => setShowCommentModal(false)}
+        />
+      )}
     </div>
   );
 }
