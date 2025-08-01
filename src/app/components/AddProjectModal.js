@@ -140,7 +140,7 @@ export default function AddProjectModal({
       for (const file of selectedFiles) {
         const formData = new FormData();
         formData.append("file", file);
-        formData.append("user_id", createdById);
+        formData.append("user_id", user.user_id);
         formData.append("project_id", savedProjectId);
 
         const uploadRes = await fetch(

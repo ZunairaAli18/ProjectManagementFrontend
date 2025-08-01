@@ -1,7 +1,20 @@
-'use client';
-import { Users, UserPlus, Pencil, FileText } from 'lucide-react';
+"use client";
+import {
+  Users,
+  UserPlus,
+  Pencil,
+  FileText,
+  MessageCircleCodeIcon,
+} from "lucide-react";
 
-export default function Card({ task, onDragStart, onViewDetails, onEditStoryModal, onViewMembers, onAssignMember }) {
+export default function Card({
+  task,
+  onDragStart,
+  onViewDetails,
+  onEditStoryModal,
+  onViewMembers,
+  onAssignMember,
+}) {
   return (
     <div
       draggable
@@ -16,12 +29,21 @@ export default function Card({ task, onDragStart, onViewDetails, onEditStoryModa
       </div>
 
       <div className="absolute bottom-2 right-2 flex space-x-2">
-        <button onClick={() => onViewMembers?.(task)} title="View Members" className="hover:scale-110 transition">
+        <button
+          onClick={() => onViewMembers?.(task)}
+          title="View Members"
+          className="hover:scale-110 transition"
+        >
           <Users className="w-4 h-4 text-blue-600 hover:text-blue-800" />
         </button>
-        <button onClick={() => onAssignMember?.(task)} title="Assign Member" className="hover:scale-110 transition">
+        <button
+          onClick={() => onAssignMember?.(task)}
+          title="Assign Member"
+          className="hover:scale-110 transition"
+        >
           <UserPlus className="w-4 h-4 text-green-600 hover:text-green-800" />
         </button>
+        <MessageCircleCodeIcon className="w-4 h-4 text-orange-700 hover:text-orange-900" />
         <button
           onClick={() => onEditStoryModal?.(task)}
           title="Edit Story"
