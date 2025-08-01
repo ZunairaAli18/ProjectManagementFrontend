@@ -26,13 +26,21 @@ export default function SelectAttachmentsModal({
     loadAttachments();
   }, [projectId]);
   useEffect(() => {
-    // Whenever parent adds temp files, merge them
     setAttachments((prev) => {
       const ids = new Set(prev.map((a) => a.attachment_id));
-      return [
-        ...prev,
-        ...selectedAttachments.filter((a) => !ids.has(a.attachment_id)),
-      ];
+      const newOnes = selectedAttachments.filter(
+        (a) => !ids.has(a.attachment_id)
+      );
+      return [...prev, ...newOnes];
+    });
+
+    // ✅ Auto-select newly added temp attachments
+    setSelected((prev) => {
+      const current = new Set(prev);
+      const newlyAdded = selectedAttachments
+        .filter((a) => !current.has(a.attachment_id))
+        .map((a) => a.attachment_id);
+      return [...prev, ...newlyAdded];
     });
   }, [selectedAttachments]);
 
