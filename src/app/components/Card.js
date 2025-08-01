@@ -1,7 +1,24 @@
-'use client';
-import { Users, UserPlus, Pencil, FileText } from 'lucide-react';
-
-export default function Card({ task, onDragStart, onViewDetails, onEditStoryModal, onViewMembers, onAssignMember }) {
+"use client";
+import {
+  Users,
+  UserPlus,
+  Pencil,
+  FileText,
+  MessageCircleCodeIcon,
+} from "lucide-react";
+import { useState } from "react";
+import { useSelector } from "react-redux";
+import CommentModal from "./commentMOdal";
+export default function Card({
+  task,
+  onDragStart,
+  onViewDetails,
+  onEditStoryModal,
+  onViewMembers,
+  onAssignMember,
+}) {
+  const user = useSelector((state) => state.auth.user);
+  const [showCommentModal, setShowCommentModal] = useState(false);
   return (
     <div
       draggable
@@ -16,12 +33,27 @@ export default function Card({ task, onDragStart, onViewDetails, onEditStoryModa
       </div>
 
       <div className="absolute bottom-2 right-2 flex space-x-2">
-        <button onClick={() => onViewMembers?.(task)} title="View Members" className="hover:scale-110 transition">
+        <button
+          onClick={() => onViewMembers?.(task)}
+          title="View Members"
+          className="hover:scale-110 transition"
+        >
           <Users className="w-4 h-4 text-blue-600 hover:text-blue-800" />
         </button>
-        <button onClick={() => onAssignMember?.(task)} title="Assign Member" className="hover:scale-110 transition">
+        <button
+          onClick={() => onAssignMember?.(task)}
+          title="Assign Member"
+          className="hover:scale-110 transition"
+        >
           <UserPlus className="w-4 h-4 text-green-600 hover:text-green-800" />
         </button>
+        <button
+          onClick={() => setShowCommentModal(true)}
+          title="Add Comment"
+          className="hover:scale-110 transition"
+        >
+          <MessageCircleCodeIcon className="w-4 h-4 text-orange-700 hover:text-orange-900" />
+        </button>{" "}
         <button
           onClick={() => onEditStoryModal?.(task)}
           title="Edit Story"
@@ -37,6 +69,13 @@ export default function Card({ task, onDragStart, onViewDetails, onEditStoryModa
           <FileText className="w-4 h-4 text-gray-600 hover:text-black" />
         </button>
       </div>
+      {showCommentModal && (
+        <CommentModal
+          taskId={task.story_id}
+          userId={user.user_id} // replace with actual logged-in user
+          onClose={() => setShowCommentModal(false)}
+        />
+      )}
     </div>
   );
 }
