@@ -1,4 +1,4 @@
-export async function changePassword(email, newPassword) {
+export async function changePassword(email, currentPassword, newPassword) {
   try {
     const response = await fetch('http://localhost:5000/change-password', {
       method: 'POST',
@@ -7,6 +7,7 @@ export async function changePassword(email, newPassword) {
       },
       body: JSON.stringify({
         email,
+        current_password: currentPassword,
         new_password: newPassword,
       }),
     });

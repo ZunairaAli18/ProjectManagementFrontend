@@ -18,11 +18,12 @@ import {
 } from "@/lib/api/projects";
 import { fetchProjectAttachments } from "@/lib/api/fetchProjectAttachments";
 import { useSearchParams } from "next/navigation";
-import Guard from "../components/Guard"; // ✅ Import your guard
+import Guard from "../components/Guard";
 import DebugAuth from "../debug-auth";
 import { useSelector } from "react-redux";
 import { Upload } from "lucide-react";
 import BotpressChatbot from "../components/BotPressChatbot";
+import { searchProjects } from "@/lib/api/searchProjects";
 
 export default function Page() {
   return (
@@ -48,8 +49,10 @@ function DashboardContent() {
   const [showAttachmentsModal, setShowAttachmentsModal] = useState(false);
   const [selectedProjectTitle, setSelectedProjectTitle] = useState("");
   const [sortOption, setSortOption] = useState("default");
+  const [searchQuery, setSearchQuery] = useState("");
 
   const user = useSelector((state) => state.auth.user);
+
   useEffect(() => {
     const fetchProjects = async () => {
       const view = SearchParams.get("view");
@@ -97,6 +100,33 @@ function DashboardContent() {
     fetchProjects();
   }, [SearchParams]);
 
+  const handleSearch = async (query) => {
+  setSearchQuery(query);
+
+  if (!query) {
+    const view = SearchParams.get("view");
+    const email = user.email;
+
+    let data = [];
+    if (view === "created") {
+      data = await getProjectsCreatedByEmail(email);
+    } else if (view === "myprojects") {
+      data = await getAllMyProjectsByEmail(email);
+    } else {
+      data = await getAllProjects();
+    }
+    setProjects(data);
+    return;
+  }
+
+  try {
+    const data = await searchProjects(query);
+    setProjects(data);
+  } catch (err) {
+    alert("Search failed: " + err.message);
+  }
+};
+
   const handleViewMembers = (projectId) => {
     setSelectedProjectId(projectId);
     setShowMembersModal(true);
@@ -112,9 +142,7 @@ function DashboardContent() {
     setSelectedProjectId(null);
   };
 
-  const handleSaveProject = async (newProject) => {
-    // setProjects([...projects, newProject]);
-  };
+  const handleSaveProject = async (newProject) => {};
 
   const handleEditProject = (project) => {
     setProjectToEdit(project);
@@ -135,7 +163,6 @@ function DashboardContent() {
     try {
       const files = await fetchProjectAttachments(project.project_id);
       setAttachments(files);
-      console.log(files);
       setSelectedProjectTitle(project.title);
       setShowAttachmentsModal(true);
     } catch (err) {
@@ -157,6 +184,7 @@ function DashboardContent() {
           <Header
             onAddProjectClick={() => setShowModal(true)}
             onAddUserClick={() => setShowUserModal(true)}
+            onSearch={handleSearch}
           />
           <div className="mt-3 mb-4 flex justify-end">
             <select

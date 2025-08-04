@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
+
 export default function ChangePasswordModal({ onClose, onConfirm }) {
+  const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
-  const modalRef = useRef(null);
 
   // Close modal on outside click
   useEffect(() => {
@@ -18,13 +19,13 @@ export default function ChangePasswordModal({ onClose, onConfirm }) {
     return () => document.removeEventListener("mousedown", handleOutsideClick);
   }, []);
   const handleConfirm = () => {
-    if (!newPassword || !confirmPassword) {
+    if (!currentPassword || !newPassword || !confirmPassword) {
       setError("All fields are required.");
     } else if (newPassword !== confirmPassword) {
       setError("Passwords do not match.");
     } else {
       setError("");
-      onConfirm(newPassword);
+      onConfirm({ currentPassword, newPassword }); // Pass both
     }
   };
 
@@ -37,6 +38,16 @@ export default function ChangePasswordModal({ onClose, onConfirm }) {
         <h2 className="text-2xl font-bold text-center text-black mb-6">
           Update Password
         </h2>
+
+        <div className="mb-4">
+          <input
+            type="password"
+            placeholder="Enter current password"
+            value={currentPassword}
+            onChange={(e) => setCurrentPassword(e.target.value)}
+            className="w-full px-4 py-3 rounded-md border border-gray-300 bg-blue-100 text-black focus:outline-none"
+          />
+        </div>
 
         <div className="mb-4">
           <input

@@ -21,12 +21,12 @@ function SettingsDashboard() {
   const [showChangePassword, setShowChangePassword] = useState(false);
 
   const handleChangePassword = () => {
-    setShowChangePassword(true); 
+    setShowChangePassword(true);
   };
 
-  const handleConfirmPassword = async (newPass) => {
+  const handleConfirmPassword = async ({ currentPassword, newPassword }) => {
     try {
-      const res = await changePassword(user.email, newPass);
+      const res = await changePassword(user.email, currentPassword, newPassword);
       if (res.success) {
         alert("Password updated successfully!");
         setShowChangePassword(false);
