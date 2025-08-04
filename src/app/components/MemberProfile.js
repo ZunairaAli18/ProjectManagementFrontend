@@ -12,7 +12,7 @@ export default function MemberProfile({
   markAssigned,
   newlyAssignedUserIds,
 }) {
-  const isAlreadyAssigned = newlyAssignedUserIds.has(member.user_id);
+  const isAlreadyAssigned = newlyAssignedUserIds?.has(member.user_id);
   if (!member) {
     return (
       <div className="h-full flex items-center justify-center text-gray-500 text-lg">
