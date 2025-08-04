@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { X, Paperclip, Upload } from "lucide-react";
 import { fetchForStory } from "@/lib/api/userstory";
 
@@ -12,7 +12,17 @@ export default function SelectAttachmentsModal({
 }) {
   const [attachments, setAttachments] = useState([]);
   const [selected, setSelected] = useState([]);
-
+  const modalRef = useRef(null);
+  // Close modal on outside click
+  useEffect(() => {
+    const handleOutsideClick = (e) => {
+      if (modalRef.current && !modalRef.current.contains(e.target)) {
+        onClose();
+      }
+    };
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => document.removeEventListener("mousedown", handleOutsideClick);
+  }, []);
   useEffect(() => {
     const loadAttachments = async () => {
       if (!projectId) return;
@@ -26,13 +36,21 @@ export default function SelectAttachmentsModal({
     loadAttachments();
   }, [projectId]);
   useEffect(() => {
-    // Whenever parent adds temp files, merge them
     setAttachments((prev) => {
       const ids = new Set(prev.map((a) => a.attachment_id));
-      return [
-        ...prev,
-        ...selectedAttachments.filter((a) => !ids.has(a.attachment_id)),
-      ];
+      const newOnes = selectedAttachments.filter(
+        (a) => !ids.has(a.attachment_id)
+      );
+      return [...prev, ...newOnes];
+    });
+
+    // ✅ Auto-select newly added temp attachments
+    setSelected((prev) => {
+      const current = new Set(prev);
+      const newlyAdded = selectedAttachments
+        .filter((a) => !current.has(a.attachment_id))
+        .map((a) => a.attachment_id);
+      return [...prev, ...newlyAdded];
     });
   }, [selectedAttachments]);
 
@@ -58,7 +76,10 @@ export default function SelectAttachmentsModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm">
-      <div className="relative bg-[#FFF7E9] shadow-xl rounded-xl p-8 w-[600px] max-h-[90vh] overflow-y-auto">
+      <div
+        ref={modalRef}
+        className="relative bg-[#FFF7E9] shadow-xl rounded-xl p-8 w-[600px] max-h-[90vh] overflow-y-auto"
+      >
         {/* Close button */}
         <button
           onClick={onClose}

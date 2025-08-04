@@ -1,11 +1,21 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 
 export default function CommentModal({ taskId, userId, onClose }) {
   const [commentText, setCommentText] = useState("");
   const [loading, setLoading] = useState(false);
   const [responseMsg, setResponseMsg] = useState("");
-
+  const modalRef = useRef(null);
+  // Close modal on outside click
+  useEffect(() => {
+    const handleOutsideClick = (e) => {
+      if (modalRef.current && !modalRef.current.contains(e.target)) {
+        onClose();
+      }
+    };
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => document.removeEventListener("mousedown", handleOutsideClick);
+  }, []);
   const handleSubmitComment = async () => {
     if (!commentText.trim()) {
       setResponseMsg("Comment cannot be empty");
@@ -41,7 +51,10 @@ export default function CommentModal({ taskId, userId, onClose }) {
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
       {" "}
-      <div className="bg-white rounded-lg shadow-lg w-96 p-6 relative">
+      <div
+        ref={modalRef}
+        className="bg-white rounded-lg shadow-lg w-96 p-6 relative"
+      >
         <h2 className="text-lg font-semibold mb-4">Add a Comment</h2>
 
         <textarea

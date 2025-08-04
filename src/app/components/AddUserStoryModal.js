@@ -17,7 +17,17 @@ export default function AddUserStoryModal({
   const [edit, setEdit] = useState(false);
   const [showAttachmentModal, setShowAttachmentModal] = useState(false);
   const [selectedAttachments, setSelectedAttachments] = useState([]);
-
+  const modalRef = useRef(null);
+  // Close modal on outside click
+  useEffect(() => {
+    const handleOutsideClick = (e) => {
+      if (modalRef.current && !modalRef.current.contains(e.target)) {
+        onClose();
+      }
+    };
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => document.removeEventListener("mousedown", handleOutsideClick);
+  }, []);
   const openFileDialog = () => {
     setShowAttachmentModal(true);
   };
@@ -195,7 +205,10 @@ export default function AddUserStoryModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm">
-      <div className="bg-[#F0E4D3] p-6 rounded-lg shadow-lg w-[90%] max-w-2xl h-[500px] relative">
+      <div
+        ref={modalRef}
+        className="bg-[#F0E4D3] p-6 rounded-lg shadow-lg w-[90%] max-w-2xl h-[500px] relative"
+      >
         <h2 className="text-4xl font-bold mb-8">
           {storyToEdit ? "Edit Story" : "Add New Story"}
         </h2>

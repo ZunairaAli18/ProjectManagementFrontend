@@ -181,7 +181,13 @@ function DashboardContent() {
           >
             ×
           </button>
-          <SingleProjectMembersPanel projectId={selectedProjectId} />
+          <SingleProjectMembersPanel
+            projectId={selectedProjectId}
+            onclose={() => {
+              setShowMembersModal(false);
+              setSelectedProjectId(null);
+            }}
+          />
         </div>
       )}
       {showAssignPanel && (
@@ -192,7 +198,13 @@ function DashboardContent() {
           >
             ×
           </button>
-          <MembersPanel projectId={assignProjectId} />
+          <MembersPanel
+            projectId={assignProjectId}
+            onclose={() => {
+              setAssignProjectId(null);
+              setShowAssignPanel(false);
+            }}
+          />
         </div>
       )}
       {showAttachmentsModal && (

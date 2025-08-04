@@ -1,27 +1,41 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from "react";
 export default function ChangePasswordModal({ onClose, onConfirm }) {
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [error, setError] = useState('');
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
+  const modalRef = useRef(null);
 
+  // Close modal on outside click
+  useEffect(() => {
+    const handleOutsideClick = (e) => {
+      if (modalRef.current && !modalRef.current.contains(e.target)) {
+        onClose();
+      }
+    };
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => document.removeEventListener("mousedown", handleOutsideClick);
+  }, []);
   const handleConfirm = () => {
     if (!newPassword || !confirmPassword) {
-      setError('All fields are required.');
+      setError("All fields are required.");
     } else if (newPassword !== confirmPassword) {
-      setError('Passwords do not match.');
+      setError("Passwords do not match.");
     } else {
-      setError('');
-      onConfirm(newPassword); 
+      setError("");
+      onConfirm(newPassword);
     }
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-black/30">
-      <div className="bg-[#f5e4cd] rounded-xl p-8 shadow-xl w-[400px]">
+      <div
+        ref={modalRef}
+        className="bg-[#f5e4cd] rounded-xl p-8 shadow-xl w-[400px]"
+      >
         <h2 className="text-2xl font-bold text-center text-black mb-6">
-            Update Password
+          Update Password
         </h2>
 
         <div className="mb-4">
