@@ -7,7 +7,12 @@ export default function MemberProfile({
   projectId,
   userStoryId,
   isAssigning,
+
+  setNewlyAssignedUserIds,
+  markAssigned,
+  newlyAssignedUserIds,
 }) {
+  const isAlreadyAssigned = newlyAssignedUserIds.has(member.user_id);
   if (!member) {
     return (
       <div className="h-full flex items-center justify-center text-gray-500 text-lg">
@@ -51,6 +56,8 @@ export default function MemberProfile({
             projectId={projectId}
             member={member}
             userStoryId={userStoryId}
+            isAlreadyAssigned={isAlreadyAssigned}
+            markAssigned={markAssigned}
           />
         </div>
       )}

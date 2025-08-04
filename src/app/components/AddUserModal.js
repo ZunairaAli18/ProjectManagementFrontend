@@ -5,6 +5,8 @@ import { createUser } from "@/lib/api/api";
 export default function AddUserModal({ onClose }) {
   const [departments, setDepartments] = useState([]);
   const [form, setForm] = useState(null); // initially null to detect "not yet initialized"
+  const [successMessage, setSuccessMessage] = useState("");
+
   const modalRef = useRef(null);
   // Close modal on outside click
   useEffect(() => {
@@ -83,9 +85,9 @@ export default function AddUserModal({ onClose }) {
 
     try {
       const result = await createUser(form);
-      alert(result.message);
+      // alert(result.message);
+      setSuccessMessage("✅ User has been registered successfully!"); // ✅ Set message
       localStorage.removeItem("user-draft"); // clear saved draft after success
-      onClose();
     } catch (error) {
       alert(error.message);
     }
@@ -113,14 +115,19 @@ export default function AddUserModal({ onClose }) {
   if (!form) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm ">
       <form
         ref={modalRef}
         onSubmit={handleSubmit}
         className="bg-[#F0E4D3] p-6 rounded-lg shadow-lg w-[90%] max-w-2xl h-[726px] overflow-y-auto"
       >
         <h2 className="text-4xl font-bold mb-8 text-center">Add New User</h2>
-
+        {/* ✅ Display success message */}
+        {successMessage && (
+          <div className="mb-6 text-green-700 text-center font-semibold bg-green-100 p-3 rounded shadow">
+            {successMessage}
+          </div>
+        )}
         <input
           type="text"
           name="name"

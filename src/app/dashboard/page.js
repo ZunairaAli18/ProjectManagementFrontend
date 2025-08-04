@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import SideBar from "../components/SideBar";
 import ProjectCard from "../components/ProjectCard";
 import Header from "../components/Header";
@@ -10,6 +11,7 @@ import SingleProjectMembersPanel from "../components/SingleProjectMembersPanel";
 import MembersPanel from "../components/MembersPanel";
 import ProjectAttachmentsModal from "../components/ProjectAttachments";
 import {
+  getProjectSummaryAlphabetical,
   getAllProjects,
   getProjectsCreatedByEmail,
   getAllMyProjectsByEmail,
@@ -31,6 +33,8 @@ export default function Page() {
 }
 
 function DashboardContent() {
+  const router = useRouter();
+
   const SearchParams = useSearchParams();
   const [projects, setProjects] = useState([]);
   const [showModal, setShowModal] = useState(false);
@@ -43,6 +47,8 @@ function DashboardContent() {
   const [attachments, setAttachments] = useState([]);
   const [showAttachmentsModal, setShowAttachmentsModal] = useState(false);
   const [selectedProjectTitle, setSelectedProjectTitle] = useState("");
+  const [sortOption, setSortOption] = useState("default");
+
   const user = useSelector((state) => state.auth.user);
   useEffect(() => {
     const fetchProjects = async () => {
@@ -67,14 +73,17 @@ function DashboardContent() {
           data = await getProjectsCreatedByEmail(email);
         } else if (view === "myprojects") {
           data = await getAllMyProjectsByEmail(email);
+        } else if (view === "alphabetical") {
+          console.log("Fetching alphabetical projects");
+          data = await getProjectSummaryAlphabetical(); // ✅ New line for alphabetical
         } else {
           data = await getAllProjects();
         }
 
         const normalized = data.map((p) => ({
           ...p,
-          created_by: p.created_by || user[1],
-          created_by_id: p.created_by_id || user[0],
+          created_by: p.created_by || user.name,
+          created_by_id: p.created_by_id || user.user_id,
           status: p.status || statusMap[p.status_id] || "Yet to Start",
         }));
 
@@ -91,6 +100,11 @@ function DashboardContent() {
   const handleViewMembers = (projectId) => {
     setSelectedProjectId(projectId);
     setShowMembersModal(true);
+  };
+  const handleSortChange = (value) => {
+    const params = new URLSearchParams(window.location.search);
+    params.set("view", value);
+    router.push(`?${params.toString()}`);
   };
 
   const closeMembersModal = () => {
@@ -144,6 +158,17 @@ function DashboardContent() {
             onAddProjectClick={() => setShowModal(true)}
             onAddUserClick={() => setShowUserModal(true)}
           />
+          <div className="mt-3 mb-4 flex justify-end">
+            <select
+              className=" p-3 rounded-lg border border-gray-300 text-white bg-yellow-500 hover:bg-yellow-600 transition"
+              onChange={(e) => handleSortChange(e.target.value)}
+              defaultValue="default"
+            >
+              <option value="default">Sort by: Default</option>
+              <option value="alphabetical">Sort by: A-Z</option>
+            </select>
+          </div>
+
           <div className="h-[calc(100vh-120px)] overflow-y-auto pr-2">
             {projects.map((project, index) => (
               <ProjectCard
@@ -200,6 +225,7 @@ function DashboardContent() {
           </button>
           <MembersPanel
             projectId={assignProjectId}
+            isAssigning={true}
             onclose={() => {
               setAssignProjectId(null);
               setShowAssignPanel(false);

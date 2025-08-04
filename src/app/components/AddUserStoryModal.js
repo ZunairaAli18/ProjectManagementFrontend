@@ -17,6 +17,8 @@ export default function AddUserStoryModal({
   const [edit, setEdit] = useState(false);
   const [showAttachmentModal, setShowAttachmentModal] = useState(false);
   const [selectedAttachments, setSelectedAttachments] = useState([]);
+  const [successMessage, setSuccessMessage] = useState("");
+
   const modalRef = useRef(null);
   // Close modal on outside click
   useEffect(() => {
@@ -125,6 +127,7 @@ export default function AddUserStoryModal({
         const res = await onSave(payload);
         console.log("Story saved: ", res);
         storyId = res.story_id;
+        setSuccessMessage("User story added successfully!");
         localStorage.removeItem("story-draft");
       }
 
@@ -184,8 +187,6 @@ export default function AddUserStoryModal({
           }),
         });
       }
-
-      onClose();
     } catch (err) {
       alert("Failed to save user story and attachments: " + err.message);
     }
@@ -207,11 +208,17 @@ export default function AddUserStoryModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm">
       <div
         ref={modalRef}
-        className="bg-[#F0E4D3] p-6 rounded-lg shadow-lg w-[90%] max-w-2xl h-[500px] relative"
+        className="bg-[#F0E4D3] p-6 rounded-lg shadow-lg w-[90%] max-w-2xl + max-h-[90vh] overflow-y-auto
+ relative"
       >
         <h2 className="text-4xl font-bold mb-8">
           {storyToEdit ? "Edit Story" : "Add New Story"}
         </h2>
+        {successMessage && (
+          <div className="mb-4 p-4 text-green-800 bg-green-200 border border-green-400 rounded">
+            {successMessage}
+          </div>
+        )}
 
         <input
           type="text"

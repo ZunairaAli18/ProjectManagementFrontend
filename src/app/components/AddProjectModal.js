@@ -19,9 +19,15 @@ export default function AddProjectModal({
   const [enable, setEnable] = useState(false);
   const [projectId, setProjectId] = useState(null); // ✅ Store project ID
   const modalRef = useRef(null);
+  const [successMessage, setSuccessMessage] = useState("");
+
   useEffect(() => {
     const handleOutsideClick = (e) => {
-      if (modalRef.current && !modalRef.current.contains(e.target)) {
+      if (
+        !showAssignPanel &&
+        modalRef.current &&
+        !modalRef.current.contains(e.target)
+      ) {
         onClose();
       }
     };
@@ -29,7 +35,7 @@ export default function AddProjectModal({
     return () => {
       document.removeEventListener("mousedown", handleOutsideClick);
     };
-  }, []);
+  }, [showAssignPanel]);
   const openAssignPanel = () => {
     setShowAssignPanel(true);
   };
@@ -148,6 +154,7 @@ export default function AddProjectModal({
       }
       setProjectId(savedProjectId); // ✅ store in state
       setEnable(true);
+      setSuccessMessage("✅ Project has been created!");
       const attachmentIds = [];
 
       for (const file of selectedFiles) {
@@ -201,7 +208,7 @@ export default function AddProjectModal({
   if (!form) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm">
+    <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/30 backdrop-blur-sm">
       <div
         ref={modalRef}
         className="bg-[#F0E4D3] p-6 rounded-lg shadow-lg w-[90%] max-w-2xl max-h-screen overflow-y-auto relative"
@@ -209,7 +216,13 @@ export default function AddProjectModal({
         <h2 className="text-4xl font-bold mb-8">
           {projectToEdit ? "Edit Project" : "Add New Project"}
         </h2>
+        {successMessage && (
+          <div className="mb-4 text-green-700 bg-green-100 border border-green-400 px-4 py-2 rounded">
+            {successMessage}
+          </div>
+        )}
 
+        <label className="block text-gray-800 mb-1">Project Name</label>
         <input
           type="text"
           name="name"
@@ -218,7 +231,7 @@ export default function AddProjectModal({
           onChange={handleChange}
           className="w-full h-[50px] bg-blue-100 border px-3 py-2 mb-8 rounded-lg shadow-lg"
         />
-
+        <label className="block text-gray-800 mb-1">Deadline</label>
         <input
           type="date"
           name="deadline"
@@ -226,7 +239,7 @@ export default function AddProjectModal({
           onChange={handleChange}
           className="w-full h-[50px] bg-blue-100 border px-3 py-2 mb-8 rounded-lg shadow-lg"
         />
-
+        <label className="block text-gray-800 mb-1">Created By</label>
         <input
           type="text"
           name="createdBy"
@@ -235,7 +248,7 @@ export default function AddProjectModal({
           readOnly
           className="w-full h-[50px] bg-blue-100 border px-3 py-2 mb-8 rounded-lg shadow-lg"
         />
-
+        <label className="block text-gray-800 mb-1">Created At</label>
         <input
           type="datetime-local"
           name="createdAt"
@@ -243,7 +256,7 @@ export default function AddProjectModal({
           readOnly
           className="w-full h-[50px] bg-blue-100 border px-3 py-2 mb-8 rounded-lg shadow-lg cursor-not-allowed"
         />
-
+        <label className="block text-gray-800 mb-1">Attachments</label>
         <label className="flex items-center gap-2 cursor-pointer mb-2">
           <span className="text-blue-600">📎 Attach Files</span>
           <input
@@ -316,6 +329,7 @@ export default function AddProjectModal({
           <MembersPanel
             isAssigning={true} // or false depending on logic
             projectId={projectId}
+            onclose={closeAssignPanel}
           />
         </div>
       )}
