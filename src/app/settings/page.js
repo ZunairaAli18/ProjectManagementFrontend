@@ -1,12 +1,13 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import Guard from '../components/Guard';
-import SideBar from '../components/SideBar';
-import Header from '../components/Header';
-import ChangePasswordModal from '../components/ChangePasswordModal';
-import { useSelector } from 'react-redux';
-import { changePassword } from '@/lib/api/ChangePassword';
+import { useState } from "react";
+import Guard from "../components/Guard";
+import SideBar from "../components/SideBar";
+import Header from "../components/Header";
+import ChangePasswordModal from "../components/ChangePasswordModal";
+import { useSelector } from "react-redux";
+import { changePassword } from "@/lib/api/ChangePassword";
+import SettingsHeader from "@/app/components/SettingsHeader";
 
 export default function SettingsPage() {
   return (
@@ -26,7 +27,11 @@ function SettingsDashboard() {
 
   const handleConfirmPassword = async ({ currentPassword, newPassword }) => {
     try {
-      const res = await changePassword(user.email, currentPassword, newPassword);
+      const res = await changePassword(
+        user.email,
+        currentPassword,
+        newPassword
+      );
       if (res.success) {
         alert("Password updated successfully!");
         setShowChangePassword(false);
@@ -42,15 +47,17 @@ function SettingsDashboard() {
     <div className="flex relative">
       <SideBar />
       <div className="flex-1 p-6 bg-[#FFE6E1] min-h-screen transition duration-300">
-        <Header />
+        <SettingsHeader />
         <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-8 text-black mt-20">
           <h1 className="text-3xl font-bold mb-8 text-center">⚙️ Settings</h1>
 
           {/* Email Info */}
           <div className="mb-6">
-            <label className="block font-semibold text-gray-700 mb-2">Logged in Email</label>
+            <label className="block font-semibold text-gray-700 mb-2">
+              Logged in Email
+            </label>
             <div className="bg-gray-100 px-4 py-2 rounded text-gray-800 border">
-              {user?.email || 'Unknown'}
+              {user?.email || "Unknown"}
             </div>
           </div>
 
@@ -59,7 +66,10 @@ function SettingsDashboard() {
             <SettingItem label="Notifications" />
             <SettingItem label="Privacy Settings" />
             <SettingItem label="Language & Region" />
-            <SettingItem label="Theme" value="Light / Dark Toggle Coming Soon" />
+            <SettingItem
+              label="Theme"
+              value="Light / Dark Toggle Coming Soon"
+            />
           </div>
 
           {/* Change Password Button */}

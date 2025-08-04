@@ -79,7 +79,7 @@ export default function SignUpPage() {
       <Navbar />
       <div className="flex items-center justify-center">
         <form
-          className="mt-15 bg-[#F6F6F6] p-8 rounded-xl shadow-xl w-[600px] h-[950px]"
+          className="mt-7 bg-[#F6F6F6] p-8 rounded-xl shadow-xl w-[600px] h-[1050px]"
           onSubmit={handleSubmit}
         >
           <h2 className="text-7xl text-center font-extrabold mb-6  text-blue-800">
