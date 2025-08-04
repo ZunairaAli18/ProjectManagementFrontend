@@ -33,7 +33,6 @@ export default function SingleProjectMembersPanel({ projectId, onclose }) {
         setLoading(false);
       }
     }
-
     fetchMembers();
   }, [projectId]);
 
