@@ -75,7 +75,7 @@ export default function SignUpPage() {
   };
 
   return (
-    <div className="bg-[#F9F3EF] min-h-screen">
+    <div className="bg-gradient-to-r from-orange-100 to-pink-200 font-sans min-h-screen">
       <Navbar />
       <div className="flex items-center justify-center">
         <form
