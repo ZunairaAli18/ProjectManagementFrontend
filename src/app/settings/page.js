@@ -46,7 +46,7 @@ function SettingsDashboard() {
   return (
     <div className="flex relative">
       <SideBar />
-      <div className="flex-1 p-6 bg-[#FFE6E1] min-h-screen transition duration-300">
+      <div className="flex-1 p-6 bg-[#F1EFEC] min-h-screen transition duration-300">
         <SettingsHeader />
         <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-8 text-black mt-20">
           <h1 className="text-3xl font-bold mb-8 text-center">⚙️ Settings</h1>
@@ -76,7 +76,7 @@ function SettingsDashboard() {
           <div className="mt-10 text-center">
             <button
               onClick={handleChangePassword}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-md shadow-md"
+              className="bg-[#58A0C8] hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-md shadow-md"
             >
               Change Password
             </button>

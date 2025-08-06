@@ -6,8 +6,8 @@ export default function Header({
   onSearch,
 }) {
   return (
-    <header className="h-[100px] w-full px-6 py-3 bg-gray-100 shadow-md flex justify-between items-center rounded-2xl">
-      <h1 className="text-5xl font-semibold">Accounts Centre</h1>
+    <header className="h-[100px] w-full px-6 py-3 bg-[#1B3C53] shadow-md flex justify-between  items-center rounded-2xl">
+      <h1 className="text-5xl text-white font-semibold">Accounts Centre</h1>
     </header>
   );
 }

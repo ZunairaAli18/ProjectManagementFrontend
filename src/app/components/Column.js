@@ -55,7 +55,7 @@ export default function Column({
   return (
     <>
       <div
-        className="bg-[#8892B0] p-4 rounded-lg shadow-md w-1/3 mx-2"
+        className="bg-[#58A0C8] p-4 rounded-lg shadow-md w-1/3 mx-2"
         onDragOver={(e) => e.preventDefault()}
         onDrop={onDrop}
       >

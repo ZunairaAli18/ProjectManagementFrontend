@@ -1,21 +1,20 @@
-'use client';
+"use client";
 
-import SideBar from '../components/SideBar';
-import ProfilePanel from '../components/ProfilePanel';
-import Guard from '../components/Guard';
+import SideBar from "../components/SideBar";
+import ProfilePanel from "../components/ProfilePanel";
+import Guard from "../components/Guard";
 
 export default function Members() {
   return (
     <Guard>
-      <div className="flex min-h-screen">
+      <div className="flex min-h-screen ">
         <SideBar />
 
         {/* Main content area */}
-        <div className="flex-1 flex flex-col bg-[#FFE6E1] p-6">
-          
+        <div className="flex-1 flex flex-col bg-[#F1EFEC] p-6">
           {/* Header */}
-          <div className="h-[100px] w-full px-6 py-3 bg-gray-100 shadow-md flex justify-between items-center rounded-2xl">
-            <h1 className="text-5xl font-bold text-gray-800">My Profile</h1>
+          <div className="h-[100px] w-full px-6 py-3 bg-[#1B3C53] shadow-md flex justify-between items-center rounded-2xl">
+            <h1 className="text-5xl font-bold text-white ">My Profile</h1>
           </div>
 
           {/* Profile Panel */}

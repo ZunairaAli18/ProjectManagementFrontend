@@ -20,7 +20,7 @@ export default function CalendarModal({ onClose }) {
     <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-black/40">
       <div
         ref={modalRef}
-        className="relative w-[90%] bg-[#fff8f0] max-w-5xl bg- rounded-lg shadow-lg p-4"
+        className="relative w-[90%] bg-white max-w-5xl bg- rounded-lg shadow-lg p-4"
       >
         <button
           onClick={onClose}
