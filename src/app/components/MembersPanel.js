@@ -72,7 +72,7 @@ export default function MembersPanel({
 
   return (
     <div
-      className="fixed inset-20 top-25 bottom-10 left-110 bg-white rounded-lg border shadow-lg z-100 overflow-hidden"
+      className="fixed inset-20 top-25 bottom-10 left-110 bg-[#58A0C8] rounded-lg border shadow-lg z-100 overflow-hidden"
       style={{ width: "1200px", height: "80vh" }}
     >
       <div ref={modalRef} className="flex h-full">
@@ -113,7 +113,7 @@ export default function MembersPanel({
         </div>
 
         {/* Right 60% */}
-        <div className="w-[60%] p-4 bg-[#FBF5DE]">
+        <div className="w-[60%] p-4 bg-[#456882]">
           {selectedMember && (
             <MemberProfile
               key={selectedMember.user_id}

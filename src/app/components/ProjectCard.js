@@ -40,31 +40,33 @@ export default function ProjectCard({
     setIsOpen((prev) => !prev);
   };
 
-const updateStatus = async (newStatus) => {
-  try {
-    const res = await fetch(`http://localhost:5000/projects/${project.project_id}/status`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        status: newStatus === "In Progress" ? "resume" : newStatus, // auto convert "Resume" to "resume"
-      }),
-    });
+  const updateStatus = async (newStatus) => {
+    try {
+      const res = await fetch(
+        `http://localhost:5000/projects/${project.project_id}/status`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            status: newStatus === "In Progress" ? "resume" : newStatus, // auto convert "Resume" to "resume"
+          }),
+        }
+      );
 
-    const data = await res.json();
+      const data = await res.json();
 
-    if (res.ok && data.Success) {
-      setStatus(data.new_status || newStatus); // fallback to newStatus if backend didn't send new_status
-    } else {
-      alert(data.error || "Failed to update status");
+      if (res.ok && data.Success) {
+        setStatus(data.new_status || newStatus); // fallback to newStatus if backend didn't send new_status
+      } else {
+        alert(data.error || "Failed to update status");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Error updating project status");
     }
-  } catch (err) {
-    console.error(err);
-    alert("Error updating project status");
-  }
-};
-
+  };
 
   return (
     <div className="relative bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition mb-6 border border-gray-300">
@@ -80,7 +82,6 @@ const updateStatus = async (newStatus) => {
             {status}
           </span>
         </div>
-
         <div className="text-gray-700 space-y-2 mb-4">
           <p>
             <strong>Created By:</strong> {project.created_by}
@@ -121,6 +122,21 @@ const updateStatus = async (newStatus) => {
           className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-md text-sm font-semibold"
         >
           View Attachments
+        </button>
+
+        <button
+          onClick={() => updateStatus("Paused")}
+          className="bg-red-500 hover:bg-red-600 text-white rounded-full p-2 "
+          title="Pause Project"
+        >
+          <PauseCircle className="w-6 h-6" />
+        </button>
+        <button
+          onClick={() => updateStatus("In Progress")}
+          className="bg-green-500 hover:bg-green-600 text-white rounded-full p-2"
+          title="Resume Project"
+        >
+          <PlayCircle className="w-6 h-6" />
         </button>
       </div>
 

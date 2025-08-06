@@ -1,12 +1,12 @@
-'use client';
+"use client";
 import Link from "next/link";
 import NavBar from "./components/NavBar";
-import './globals.css';
+import "./globals.css";
 
 export default function HomePage() {
   return (
-      <div className="min-h-screen bg-gradient-to-r from-orange-100 to-pink-200 font-sans">
-      <NavBar/>
+    <div className="min-h-screen bg-[#F1EFEC] font-sans">
+      <NavBar />
 
       <div className="flex flex-col md:flex-row items-center justify-between px-8 md:px-20 py-20">
         {/* Left Section */}
@@ -20,7 +20,7 @@ export default function HomePage() {
 
           {/* Login Button as Link */}
           <Link href="/signup">
-            <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg shadow">
+            <button className="bg-[#456882] hover:bg-blue-700 text-white px-6 py-3 rounded-lg shadow">
               Get Started With Us
             </button>
           </Link>

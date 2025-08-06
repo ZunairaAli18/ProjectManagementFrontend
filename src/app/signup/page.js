@@ -75,7 +75,7 @@ export default function SignUpPage() {
   };
 
   return (
-    <div className="bg-gradient-to-r from-orange-100 to-pink-200 font-sans min-h-screen">
+    <div className="bg-[#F9F3EF] font-sans min-h-screen">
       <Navbar />
       <div className="flex items-center justify-center">
         <form
@@ -215,7 +215,7 @@ export default function SignUpPage() {
           </div>
           <button
             type="submit"
-            className="mt-3 h-[60px] w-full bg-blue-600 text-white font-bold py-2 px-4 rounded-xl hover:bg-blue-700 transition text-2xl"
+            className="mt-3 h-[60px] w-full bg-[#456882] text-white font-bold py-2 px-4 rounded-xl hover:bg-blue-700 transition text-2xl"
           >
             Sign Up
           </button>
