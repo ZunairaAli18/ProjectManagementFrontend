@@ -123,21 +123,6 @@ export default function ProjectCard({
         >
           View Attachments
         </button>
-
-        <button
-          onClick={() => updateStatus("Paused")}
-          className="bg-red-500 hover:bg-red-600 text-white rounded-full p-2 "
-          title="Pause Project"
-        >
-          <PauseCircle className="w-6 h-6" />
-        </button>
-        <button
-          onClick={() => updateStatus("In Progress")}
-          className="bg-green-500 hover:bg-green-600 text-white rounded-full p-2"
-          title="Resume Project"
-        >
-          <PlayCircle className="w-6 h-6" />
-        </button>
       </div>
 
       {/* Pause & Resume buttons */}
