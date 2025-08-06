@@ -1,9 +1,13 @@
-'use client';
+"use client";
 
-export default function Header({ onAddProjectClick, onAddUserClick, onSearch }) {
+export default function Header({
+  onAddProjectClick,
+  onAddUserClick,
+  onSearch,
+}) {
   return (
-    <header className="h-[100px] w-full px-6 py-3 bg-gray-100 shadow-md flex justify-between items-center rounded-2xl">
-      <h1 className="text-4xl font-semibold">Project Dashboard</h1>
+    <header className="h-[100px] w-full px-6 py-3 bg-[#1B3C53] shadow-md flex justify-between items-center rounded-2xl">
+      <h1 className="text-4xl text-white font-semibold">Project Dashboard</h1>
 
       <div className="flex items-center gap-4">
         <input

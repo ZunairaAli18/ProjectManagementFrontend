@@ -41,14 +41,14 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-orange-100 to-pink-200 font-sans">
+    <div className="min-h-screen bg-[#F1EFEC] font-sans">
       <NavBar />
 
       {/* Center the card */}
-      <div className="flex justify-center items-center mt-30 px-4">
-        <div className="w-full max-w-sm bg-[#F6F6F6] p-8 rounded-xl shadow-lg">
+      <div className="flex justify-center items-center mt-30 p-4">
+        <div className="w-full max-w-md bg-[#F6F6F6] p-10 rounded-xl shadow-lg">
           {showSuccessMessage && (
-            <div className="mb-4 text-green-700 bg-green-100 px-4 py-2 rounded shadow">
+            <div className="mb-6 text-green-700 bg-green-100 px-4 py-2 rounded shadow">
               You are registered successfully!
             </div>
           )}
@@ -83,7 +83,7 @@ export default function LoginPage() {
 
             <button
               type="submit"
-              className="mt-3 h-[60px] w-full bg-blue-600 text-white font-bold py-2 px-4 rounded-xl hover:bg-blue-700 transition text-2xl"
+              className="mt-3 h-[60px] w-full bg-[#456882] text-white font-bold py-2 px-4 rounded-xl hover:bg-blue-700 transition text-2xl"
             >
               Login
             </button>

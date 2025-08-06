@@ -101,31 +101,31 @@ function DashboardContent() {
   }, [SearchParams]);
 
   const handleSearch = async (query) => {
-  setSearchQuery(query);
+    setSearchQuery(query);
 
-  if (!query) {
-    const view = SearchParams.get("view");
-    const email = user.email;
+    if (!query) {
+      const view = SearchParams.get("view");
+      const email = user.email;
 
-    let data = [];
-    if (view === "created") {
-      data = await getProjectsCreatedByEmail(email);
-    } else if (view === "myprojects") {
-      data = await getAllMyProjectsByEmail(email);
-    } else {
-      data = await getAllProjects();
+      let data = [];
+      if (view === "created") {
+        data = await getProjectsCreatedByEmail(email);
+      } else if (view === "myprojects") {
+        data = await getAllMyProjectsByEmail(email);
+      } else {
+        data = await getAllProjects();
+      }
+      setProjects(data);
+      return;
     }
-    setProjects(data);
-    return;
-  }
 
-  try {
-    const data = await searchProjects(query);
-    setProjects(data);
-  } catch (err) {
-    alert("Search failed: " + err.message);
-  }
-};
+    try {
+      const data = await searchProjects(query);
+      setProjects(data);
+    } catch (err) {
+      alert("Search failed: " + err.message);
+    }
+  };
 
   const handleViewMembers = (projectId) => {
     setSelectedProjectId(projectId);
@@ -177,7 +177,7 @@ function DashboardContent() {
         <SideBar />
         <BotpressChatbot />
         <div
-          className={`flex-1 p-6 bg-[#FFE6E1] min-h-screen transition duration-300 ${
+          className={`flex-1 p-6 bg-[#F1EFEC] min-h-screen transition duration-300 ${
             showModal ? "blur-sm" : ""
           }`}
         >
