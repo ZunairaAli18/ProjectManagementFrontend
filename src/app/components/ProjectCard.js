@@ -101,25 +101,25 @@ export default function ProjectCard({
       <div className="flex gap-4 mt-2">
         <button
           onClick={handleViewMembers}
-          className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-md text-sm font-semibold"
+          className="bg-[#58A0C8] hover:bg-yellow-600 text-white px-4 py-2 rounded-md text-sm font-semibold"
         >
           View Members
         </button>
         <button
           onClick={handleAssignMember}
-          className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-md text-sm font-semibold"
+          className="bg-[#58A0C8] hover:bg-yellow-600 text-white px-4 py-2 rounded-md text-sm font-semibold"
         >
           Assign Member
         </button>
         <button
           onClick={handleEditProject}
-          className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-md text-sm font-semibold"
+          className="bg-[#58A0C8] hover:bg-yellow-600 text-white px-4 py-2 rounded-md text-sm font-semibold"
         >
           Edit Project
         </button>
         <button
           onClick={handleAttachmentFetch}
-          className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-md text-sm font-semibold"
+          className="bg-[#58A0C8] hover:bg-yellow-600 text-white px-4 py-2 rounded-md text-sm font-semibold"
         >
           View Attachments
         </button>
