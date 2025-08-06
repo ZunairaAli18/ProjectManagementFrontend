@@ -6,6 +6,7 @@ import { logout } from "@/store/slices/authSlice";
 import { Calendar } from "lucide-react"; // Icon
 import { useState } from "react";
 import CalendarModal from "./CalendarModal"; // <-- You need to create this
+import Image from "next/image"; // <-- Import Image component
 
 export default function SideBar() {
   const router = useRouter();
@@ -32,7 +33,14 @@ export default function SideBar() {
         <div>
           <div className="flex items-center justify-between px-6 py-5 border-b border-gray-300">
             <div className="flex items-center">
-              <div className="w-10 h-10 bg-blue-500 rounded-full mr-3"></div>
+              {/* Project Icon */}
+              <Image
+                src="/project-management.png"
+                alt="Project Management"
+                width={40}
+                height={40}
+                className="mr-3 rounded-full"
+              />
               <h1 className="text-xl font-bold text-gray-100">Projectify</h1>
             </div>
             <button
