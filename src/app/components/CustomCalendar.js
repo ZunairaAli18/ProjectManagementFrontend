@@ -207,22 +207,22 @@ export default function CustomCalendar() {
   //   };
 
   const CustomToolbar = ({ label, onNavigate, onView }) => (
-    <div className="flex justify-between items-center mb-4 bg-[#D2C1B6] px-4 py-2 rounded-md ">
+    <div className="flex justify-between items-center mb-4 bg-[#456882] px-4 py-2 rounded-md ">
       <div className="flex gap-2">
         <button
-          className="bg-[#456882] text-white px-2 py-1 rounded"
+          className="bg-[#1B3C53] text-white px-2 py-1 rounded"
           onClick={() => onNavigate("TODAY")}
         >
           Today
         </button>
         <button
-          className="bg-[#456882] text-white px-2 py-1 rounded"
+          className="bg-[#1B3C53] text-white px-2 py-1 rounded"
           onClick={() => onNavigate("PREV")}
         >
           ‹
         </button>
         <button
-          className="bg-[#456882] text-white px-2 py-1 rounded"
+          className="bg-[#1B3C53] text-white px-2 py-1 rounded"
           onClick={() => onNavigate("NEXT")}
         >
           ›
@@ -231,19 +231,19 @@ export default function CustomCalendar() {
       <h2 className="text-xl font-bold text-orange-700">{label}</h2>
       <div className="flex gap-2">
         <button
-          className="bg-[#456882] text-white px-2 py-1 rounded"
+          className="bg-[#1B3C53] text-white px-2 py-1 rounded"
           onClick={() => onView("month")}
         >
           Month
         </button>
         <button
-          className="bg-[#456882] text-white px-2 py-1 rounded"
+          className="bg-[#1B3C53] text-white px-2 py-1 rounded"
           onClick={() => onView("week")}
         >
           Week
         </button>
         <button
-          className="bg-[#456882] text-white px-2 py-1 rounded"
+          className="bg-[#1B3C53] text-white px-2 py-1 rounded"
           onClick={() => onView("day")}
         >
           Day
@@ -293,6 +293,7 @@ export default function CustomCalendar() {
                 backgroundColor: "#F9F3EF", //cal bg
                 borderRadius: "10px",
                 padding: "10px",
+               
               }}
               eventPropGetter={(event) => ({
                 style: {

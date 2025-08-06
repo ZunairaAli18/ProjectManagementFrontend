@@ -81,16 +81,6 @@ export default function ProjectCard({
             >
               {project.status}
             </span>
-            <button
-              onClick={(e) => {
-                e.stopPropagation(); // prevent dropdown toggle
-                console.log("Pause clicked for:", project.project_id);
-                // TODO: call your pause API here
-              }}
-              className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md text-sm font-semibold"
-            >
-              Pause Project
-            </button>
           </div>
         </div>
         <div className="text-gray-700 space-y-2 mb-4">
