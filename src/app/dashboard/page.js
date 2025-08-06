@@ -188,7 +188,7 @@ function DashboardContent() {
           />
           <div className="mt-3 mb-4 flex justify-end">
             <select
-              className=" p-3 rounded-lg border border-gray-300 text-white bg-yellow-500 hover:bg-yellow-600 transition"
+              className=" p-3 rounded-lg border border-gray-300 text-white bg-[#58A0C8] hover:bg-yellow-600 transition"
               onChange={(e) => handleSortChange(e.target.value)}
               defaultValue="default"
             >

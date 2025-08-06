@@ -19,14 +19,14 @@ export default function Header({
 
         <button
           onClick={onAddProjectClick}
-          className="px-4 py-2 bg-yellow-400 text-white rounded hover:bg-yellow-500 transition text-lg font-bold"
+          className="px-4 py-2 bg-[#58A0C8] text-white rounded hover:bg-yellow-500 transition text-lg font-bold"
         >
           Add Project
         </button>
 
         <button
           onClick={onAddUserClick}
-          className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition text-lg font-bold"
+          className="px-4 py-2 bg-[#58A0C8] text-white rounded hover:bg-green-600 transition text-lg font-bold"
         >
           Add User
         </button>
