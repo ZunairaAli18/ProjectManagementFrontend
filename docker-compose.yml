@@ -1,14 +1,15 @@
-version: '3.9'
-
+version: "3.9"
 services:
   frontend:
-    build: ./frontend
-    container_name: next-frontend
+    build:
+      context: . # current folder = frontend folder
+      dockerfile: Dockerfile
+    container_name: projectify-frontend
     ports:
-      - "3000:3000"
+      - "3001:3000"
     volumes:
-      - ./frontend:/app
-      - /app/node_modules
+      - .:/src/app # mount everything in frontend folder to /app
+      - /node_modules # keep container's node_modules
     environment:
       - NEXT_PUBLIC_API_URL=http://localhost:5000
     restart: unless-stopped
